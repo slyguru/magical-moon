@@ -5,7 +5,7 @@
 
 @custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
 
-@layer base {
+/*@layer base {
   * {
     @apply border-border outline-accent/75;
     scrollbar-width: auto;
@@ -19,10 +19,45 @@
   [role="button"]:not(:disabled) {
     cursor: pointer;
   }
+}*/
+@layer base {
+  * {
+    @apply border-border outline-accent/75;
+    scrollbar-width: auto;
+    scrollbar-color: var(--color-muted) transparent;
+  }
+
+  /* --- LIGHT MODE BACKGROUND --- */
+  [data-theme='light'] body {
+    /* The linear-gradient acts as a semi-transparent overlay on top of your SVG */
+    background-image: linear-gradient(rgba(248, 250, 252, 0.58), rgba(248, 250, 252, 0.58)), url('/bg-light.svg');
+    background-size: cover;
+    background-attachment: fixed;
+    background-position: center;
+  }
+
+  /* --- DARK MODE BACKGROUND --- */
+  [data-theme='dark'] body {
+    background-image: url('/bg-dark.svg');
+    background-size: cover;
+    background-attachment: fixed;
+    background-position: center;
+  }
+
+  a,
+  button {
+    @apply outline-accent outline-offset-1 focus-visible:no-underline focus-visible:outline-2 focus-visible:outline-dashed;
+  }
+
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
+
 }
 
 @utility max-w-app {
-  @apply max-w-3xl;
+  @apply max-w-4xl;
 }
 
 @utility app-layout {
@@ -35,4 +70,11 @@
 
 :target {
   scroll-margin-block: 1rem;
+}
+
+/* Justify all paragraphs inside main content and articles */
+main p,
+article p,
+.prose p {
+  text-align: justify;
 }

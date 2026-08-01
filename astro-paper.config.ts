@@ -2,14 +2,14 @@ import { defineAstroPaperConfig } from "./src/types/config";
 
 export default defineAstroPaperConfig({
   site: {
-    url: "https://astro-paper.pages.dev/",
-    title: "AstroPaper",
-    description: "A minimal, responsive and SEO-friendly Astro blog theme.",
-    author: "Sat Naing",
-    profile: "https://satna.ing",
+    url: "https://yourdomain.com/", // Replace with your actual domain when ready
+    title: "Azure Brian",
+    description: "Cyber Defense Analyst, Technical Mentor, and Independent Security Consultant.",
+    author: "Brian Wafula",
+    profile: "https://yourdomain.com/about", // You can also change this to your LinkedIn URL
     ogImage: "default-og.jpg",
     lang: "en",
-    timezone: "Asia/Bangkok",
+    timezone: "Africa/Nairobi",
     dir: "ltr",
   },
   posts: {
@@ -23,15 +23,15 @@ export default defineAstroPaperConfig({
     showArchives: true,
     showBackButton: true,
     editPost: {
-      enabled: true,
-      url: "https://github.com/satnaing/astro-paper/edit/main/",
+      enabled: false, // Set to false so it doesn't point visitors to the default Astro repo
+      url: "https://github.com/yourusername/your-repo/edit/main/",
     },
     search: "pagefind",
   },
   socials: [
-    { name: "github",   url: "https://github.com/satnaing/astro-paper" },
-    { name: "x",        url: "https://x.com/username" },
-    { name: "linkedin", url: "https://www.linkedin.com/in/username/" },
+    { name: "github",   url: "https://github.com/yourusername" },
+    { name: "x",        url: "https://x.com/yourusername" },
+    { name: "linkedin", url: "https://www.linkedin.com/in/yourusername/" },
     { name: "mail",     url: "mailto:yourmail@gmail.com" },
   ],
   shareLinks: [

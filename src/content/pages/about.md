@@ -1,37 +1,22 @@
 ---
 title: "About"
-description: "A bit about me and this blog."
+description: "Cyber Defense Analyst, Technical Mentor, and Independent Security Consultant."
 ---
 
-AstroPaper is a minimal, accessible and SEO-friendly blog theme built with [Astro](https://astro.build/) and [Tailwind CSS](https://tailwindcss.com/).
+<img src="/profile.png" class="mx-auto mt-8 mb-6 w-48 h-48 rounded-full object-cover shadow-lg border-2 border-accent" alt="Brian Wafula" />
 
-![Astro Paper](@/assets/images/astropaper-og.jpg)
+Hi, I am Brian Wafula—though friends and peers often call me **Azure Brian**. My deep focus and technical prowess with Identity and Access Management (IAM) within the Azure cloud is actually the inspiration behind this domain. 
 
-AstroPaper provides a solid foundation for blogs, or even portfolios\_ with full markdown support, built-in dark mode, and a clean layout that works out-of-the-box.
+Based in Nairobi, Kenya, I wear a few different hats in the cybersecurity space: I operate as a Cyber Defense Analyst for an MSSP, double as a Cybersecurity Technical Mentor at Moringa School, and work as an independent security consultant.
 
-The blog posts in this theme also serve as guides, docs or example articles\_ making AstroPaper a flexible starting point for your next content-driven site.
+My technical philosophy across all of these roles is built around a **No Zero Day** mindset—emphasizing consistent daily progress, practical execution, and hands-on problem-solving over perfection.
 
-## Features
+### Technical Operations
+I absolutely love tinkering with Azure and enterprise cloud infrastructure. My daily operations span from defensive security engineering to designing CTF rubrics around TryHackMe and Hack The Box. Whether I am hunting threats, spinning up and hardening cloud environments, or guiding cohorts through complex automated SOC simulations, I am deeply engaged in the mechanics of security and continuous learning.
 
-AstroPaper comes with a set of useful features that make content publishing easy and effective:
+### Beyond the Terminal
+When I step away from my Aula F75 keyboard and Maono PD200X microphone, you will likely find me outside. I believe in spending time outdoors to chase tranquility and declutter the brain. 
 
-- SEO-friendly
-- Fast performance
-- Light & dark mode
-- Highly customizable
-- Organizable blog posts
-- Responsive & accessible
-- Static search with [PageFind](https://pagefind.app/)
-- Automatic social image generation
+I also have a strong passion for hands-on automotive diagnostics. I spend my downtime working on my jalopy—whether that involves parsing OBD2 fault codes, diagnosing a noisy fan belt, or getting under the chassis to maintain the propeller shaft. 
 
-and so much more.
-
-## Show your support
-
-If you like [AstroPaper](https://github.com/satnaing/astro-paper), consider giving it a star ⭐️.
-
-Found a bug 🐛 or have an improvement ✨ in mind? Feel free to open an [issue](https://github.com/satnaing/astro-paper/issues), submit a [pull request](https://github.com/satnaing/astro-paper/pulls) or start a [discussion](https://github.com/satnaing/astro-paper/discussions).
-
-If you find this theme helpful, you can also [sponsor me on GitHub](https://github.com/sponsors/satnaing) or [buy me a coffee](https://buymeacoffee.com/satnaing) to show your support — every penny counts.
-
-Kyay zuu! 🙏🏼
+Execution is worshipped—both on the cloud (in heaven) and on the road (on earth). But neither runs without fuel. If my guides helped you untangle a messy Azure policy or crush a CTF, consider buying me a coffee to keep the late-night labs running. ☕

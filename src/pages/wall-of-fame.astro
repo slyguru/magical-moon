@@ -1,0 +1,31 @@
+---
+import { getEntry, render } from "astro:content";
+import Layout from "@/layouts/Layout.astro";
+import Header from "@/components/Header.astro";
+import Breadcrumb from "@/components/Breadcrumb.astro";
+import Main from "@/components/Main.astro";
+import Footer from "@/components/Footer.astro";
+import config from "@/config";
+
+const fame = await getEntry("pages", "wall-of-fame");
+
+if (!fame) {
+  throw new Error(
+    "Missing content entry: `wall-of-fame.md` in `src/content/pages/`"
+  );
+}
+
+const { Content } = await render(fame);
+---
+
+<Layout
+  title={`${fame.data.title} | ${config.site.title}`}
+  description={fame.data.description}
+>
+  <Header />
+  <Breadcrumb />
+  <Main pageTitle={fame.data.title} class="app-prose">
+    <Content />
+  </Main>
+  <Footer />
+</Layout>
