@@ -7,6 +7,9 @@ import Main from "@/components/Main.astro";
 import Footer from "@/components/Footer.astro";
 import config from "@/config";
 
+// 1. Import the Postcard component here
+import PostcardReviews from "@/components/PostcardReviews.astro";
+
 const fame = await getEntry("pages", "wall-of-fame");
 
 if (!fame) {
@@ -24,8 +27,16 @@ const { Content } = await render(fame);
 >
   <Header />
   <Breadcrumb />
+
   <Main pageTitle={fame.data.title} class="app-prose">
+    {/* Renders your markdown text (e.g., intro paragraphs) */}
     <Content />
+
+    {/* 2. Add the Postcard Slider below the markdown content */}
+    <div class="mt-12 not-prose">
+      <PostcardReviews />
+    </div>
   </Main>
+
   <Footer />
 </Layout>
