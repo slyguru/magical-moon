@@ -2,11 +2,11 @@ import { defineAstroPaperConfig } from "./src/types/config";
 
 export default defineAstroPaperConfig({
   site: {
-    url: "https://yourdomain.com/", // Replace with your actual domain when ready
+    url: "https://azurebrian.dev/", // Replace with your actual domain when ready
     title: "Azure Brian",
     description: "Cyber Defense Analyst, Technical Mentor, and Independent Security Consultant.",
     author: "Brian Wafula",
-    profile: "https://yourdomain.com/about", // You can also change this to your LinkedIn URL
+    profile: "https://azurebrian.dev/about", // You can also change this to your LinkedIn URL
     ogImage: "default-og.jpg",
     lang: "en",
     timezone: "Africa/Nairobi",
@@ -24,7 +24,7 @@ export default defineAstroPaperConfig({
     showBackButton: true,
     editPost: {
       enabled: false, // Set to false so it doesn't point visitors to the default Astro repo
-      url: "https://github.com/yourusername/your-repo/edit/main/",
+      // url: "https://github.com/yourusername/your-repo/edit/main/",
     },
     search: "pagefind",
   },
