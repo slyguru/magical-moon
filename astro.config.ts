@@ -19,8 +19,11 @@ import {
 import { transformerFileName } from "./src/utils/transformers/fileName";
 import config from "./astro-paper.config";
 
+import cloudflare from "@astrojs/cloudflare";
+
 export default defineConfig({
   site: config.site.url,
+
   integrations: [
     mdx(),
     sitemap({
@@ -28,6 +31,7 @@ export default defineConfig({
         config.features?.showArchives !== false || !page.endsWith("/archives/"),
     }),
   ],
+
   i18n: {
     locales: ["en"],
     defaultLocale: "en",
@@ -35,6 +39,7 @@ export default defineConfig({
       prefixDefaultLocale: false,
     },
   },
+
   markdown: {
     processor: unified({
       remarkPlugins: [
@@ -55,9 +60,11 @@ export default defineConfig({
       ],
     },
   },
+
   vite: {
     plugins: [tailwindcss()],
   },
+
   fonts: [
     {
       name: "Google Sans Code",
@@ -69,6 +76,7 @@ export default defineConfig({
       formats: ["woff", "ttf"],
     },
   ],
+
   env: {
     schema: {
       PUBLIC_GOOGLE_SITE_VERIFICATION: envField.string({
@@ -78,7 +86,10 @@ export default defineConfig({
       }),
     },
   },
+
   experimental: {
     svgOptimizer: svgoOptimizer(),
   },
+
+  adapter: cloudflare(),
 });

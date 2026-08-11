@@ -128,8 +128,8 @@ for (let i = restOfReviews.length - 1; i > 0; i--) {
   [restOfReviews[i], restOfReviews[j]] = [restOfReviews[j], restOfReviews[i]];
 }
 
-// Recombine so Peace is first, followed by the randomized ones
-const reviews = [peaceReview, ...restOfReviews];
+// Recombine safely to remove the 'undefined' warning
+const reviews = peaceReview ? [peaceReview, ...restOfReviews] : restOfReviews;
 ---
 
 <div class="review-board">
