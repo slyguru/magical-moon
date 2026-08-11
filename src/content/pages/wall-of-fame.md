@@ -13,4 +13,4 @@ A showcase of continuous learning, technical mastery, and industry recognition:
 * **Subject Matter Expert (SME):** CompTIA Cloud+ (SME Program Applicant)
 
 ### Global Instruction & Impact
-From local mentorship at Moringa School to international training programs, the ultimate reward is seeing the flawless technical execution and growth of my clients and mentees. Here is what they have to say:
+My journey has spanned from local classrooms at Moringa School to training professionals on an international stage. Through it all, the ultimate payoff has been witnessing the technical mastery and career growth of those I guide. Here are some postcards they’ve sent my way from all over the world: 

@@ -1,58 +1,135 @@
 ---
 // src/components/PostcardReviews.astro
 
-const reviews = [
+const initialReviews = [
   {
     name: "Didacus A.",
-    designation: "Cybersecurity Mentee",
+    designation: "Mentee",
+    program: "Moringa",
+    country: "Kenya",
     text: "The 'No Zero Day' mindset completely shifted how I approach my technical execution. The 120-minute SOC simulation gauntlets forced us to apply what we learned in a real-world, high-pressure environment."
   },
   {
     name: "Joygloria C.",
-    designation: "Cybersecurity Mentee",
+    designation: "Mentee",
+    program: "Moringa",
+    country: "Kenya",
     text: "Strict but incredibly effective. The evaluation rubrics for our Windows Server 2022 hardening projects pushed us to actually understand CIS benchmarks. You can't just skim the surface in this cohort."
   },
   {
     name: "Denis B.",
-    designation: "Cybersecurity Mentee",
+    designation: "Mentee",
+    program: "Moringa",
+    country: "Kenya",
     text: "What sets this mentorship apart is the depth. We didn't just look at surface-level vulnerabilities; we mapped out the critical architectural building blocks of APIs to understand exactly how the infrastructure functions."
   },
   {
     name: "Daniel O.",
-    designation: "Cybersecurity Mentee",
+    designation: "Mentee",
+    program: "Moringa",
+    country: "Kenya",
     text: "Beyond just Hack The Box labs, the guidance on navigating the truth about cybersecurity careers gave me a clear roadmap. It's a perfect balance of hands-on offensive frameworks and actionable career hacks."
   },
   {
     name: "Persevere M.",
-    designation: "Cybersecurity Mentee",
+    designation: "Mentee",
+    program: "Moringa",
+    country: "Kenya",
     text: "Expect to be challenged. The standard for academic integrity is extremely high. The hands-on Phishing Unfolding rooms ensure you are executing technically, not just memorizing theory."
   },
   {
     name: "S. K.",
-    designation: "Cybersecurity Mentee",
+    designation: "Mentee",
+    program: "Moringa",
+    country: "Kenya",
     text: "Setting up multi-boot partitions with Kali Linux and Ubuntu under this level of guidance made hypervisors and Vagrant finally click for me. The hands-on troubleshooting is unmatched."
   },
   {
     name: "Alex M.",
-    designation: "Cybersecurity Mentee",
+    designation: "Mentee",
+    program: "Moringa",
+    country: "Kenya",
     text: "The lab rubrics built around CTFs and the OSCP focus parameters are not for the faint of heart, but they prepare you for the real deal. You learn to prioritize technical execution over perfection."
   },
   {
     name: "J. T.",
-    designation: "Cybersecurity Mentee",
+    designation: "Mentee",
+    program: "Moringa",
+    country: "Kenya",
     text: "The frameworks we covered for hardware redundancy and network resilience strategies completely changed how I view enterprise IT infrastructure. It's practical, industry-ready knowledge."
   },
   {
     name: "Michael N.",
-    designation: "Cybersecurity Mentee",
+    designation: "Mentee",
+    program: "Moringa",
+    country: "Kenya",
     text: "The 'Truth About Cybersecurity Careers' webinar was a game-changer. Getting straight talk on domains, finding mentors, and navigating job applications was exactly what I needed."
   },
   {
     name: "E. W.",
-    designation: "Cybersecurity Mentee",
+    designation: "Mentee",
+    program: "Moringa",
+    country: "Kenya",
     text: "Flawless technical execution is the baseline here. The combination of hands-on TryHackMe labs and strict grading criteria ensures that when you leave, you actually know your stuff."
+  },
+  {
+    name: "Tetuh Wibinah",
+    designation: "Mentee",
+    program: "CyberGirls",
+    country: "Cameroon",
+    text: "I have been learning soo much from your classes. Thanks for the impactful sessions."
+  },
+  {
+    name: "Peace Ojo",
+    designation: "Mentee",
+    program: "CyberGirls",
+    country: "Nigeria",
+    text: "I really enjoyed all your classes. Thank you so much sir."
+  },
+  {
+    name: "Elizabeth Mwania",
+    designation: "Mentee",
+    program: "CyberGirls",
+    country: "Kenya",
+    text: "It has been such informative sessions during CompTIA classes. You're a talented trainer sir."
+  },
+  {
+    name: "Magdalene Efumbi",
+    designation: "Mentee",
+    program: "CyberGirls",
+    country: "Kenya",
+    text: "Wish u joined CyberGirls earlier."
+  },
+  {
+    name: "Titilope Ojelade",
+    designation: "Mentee",
+    program: "CyberGirls",
+    country: "Nigeria",
+    text: "With the help of our astute trainer, Brian Wafula, we also had an in-depth learning of cryptography methods, web application attacks and mitigation techniques."
+  },
+  {
+    name: "Orifha Joan",
+    designation: "Mentee",
+    program: "CyberGirls",
+    country: "Nigeria",
+    text: "Live session with you has been amazing and insightful."
   }
 ];
+
+// Extract Peace Ojo
+const peaceReview = initialReviews.find(r => r.name === "Peace Ojo");
+
+// Filter out Peace Ojo to shuffle the rest
+const restOfReviews = initialReviews.filter(r => r.name !== "Peace Ojo");
+
+// Shuffle the remaining reviews (Fisher-Yates Shuffle)
+for (let i = restOfReviews.length - 1; i > 0; i--) {
+  const j = Math.floor(Math.random() * (i + 1));
+  [restOfReviews[i], restOfReviews[j]] = [restOfReviews[j], restOfReviews[i]];
+}
+
+// Recombine so Peace is first, followed by the randomized ones
+const reviews = [peaceReview, ...restOfReviews];
 ---
 
 <div class="review-board">
@@ -74,9 +151,16 @@ const reviews = [
                 <span>NAIROBI<br>AUG 3<br>2026</span>
               </div>
               <div class="designation">{review.designation}</div>
-              <div class="address-line"></div>
-              <div class="address-line name-line">
-                <div class="author-name">{review.name}</div>
+
+              <!-- Populating the previously empty address line -->
+              <div class="address-line">
+                <div class="location-text" title={`${review.program}, ${review.country}`}>
+                  {review.program}, {review.country}
+                </div>
+              </div>
+
+              <div class="address-line">
+                <div class="author-name" title={review.name}>{review.name}</div>
               </div>
             </div>
           </div>
@@ -90,7 +174,7 @@ const reviews = [
 </div>
 
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Architects+Daughter&family=Kalam:wght@400;700&family=Special+Elite&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Architects+Daughter&family=Special+Elite&display=swap');
 
   /* The Container - Tightly fit to the postcard */
   .review-board {
@@ -182,8 +266,8 @@ const reviews = [
   }
 
   .review-section {
-    flex: 1.6;
-    padding: 10px 12px;
+    flex: 1; /* Takes up remaining space */
+    padding: 10px;
     display: flex;
     align-items: center;
   }
@@ -204,45 +288,53 @@ const reviews = [
   }
 
   .address-section {
-    flex: 1;
-    padding: 15px 15px 15px 10px;
+    width: 135px; /* Rigid width to ensure address line boundaries */
+    flex: none;
+    padding: 15px 10px 15px 10px;
     position: relative;
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
   }
 
-  /* Scaled down stamp */
+  /* Faded blue stamp with Graduation Hat */
   .stamp {
     position: absolute;
     top: 15px;
     right: 15px;
     width: 30px;
     height: 40px;
-    background-color: #d46b53;
+
+    background-color: #5c85a6; /* Faded vintage blue */
+    background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='rgba(253, 245, 230, 0.45)'%3E%3Cpath d='M12 3L1 9l4 2.18v6L12 21l7-3.82v-6l2-1.09V17h2V9L12 3zm6.82 6L12 12.72 5.18 9 12 5.28 18.82 9zM17 15.99l-5 2.73-5-2.73v-3.72l5 2.73 5-2.73v3.72z'/%3E%3C/svg%3E");
+    background-size: 20px;
+    background-position: center 4px;
+    background-repeat: no-repeat;
+
     border: 2px dashed #fdf5e6;
     outline: 1px solid rgba(0, 0, 0, 0.2);
     box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.2);
 
     display: flex;
     justify-content: center;
-    align-items: center;
+    align-items: flex-end;
+    padding-bottom: 4px;
 
     font-family: 'Special Elite', monospace;
     font-size: 9px;
     font-weight: 700;
-    color: rgba(253, 245, 230, 0.7);
+    color: rgba(253, 245, 230, 0.95);
     letter-spacing: 0.5px;
   }
 
-  /* Scaled down postmark */
+  /* Faded blue ink postmark */
   .postmark {
     position: absolute;
     top: 10px;
     right: 32px;
     width: 55px;
     height: 55px;
-    border: 1.5px solid rgba(40, 40, 40, 0.5);
+    border: 1.5px solid rgba(56, 92, 133, 0.5);
     border-radius: 50%;
     display: flex;
     flex-direction: column;
@@ -250,7 +342,7 @@ const reviews = [
     justify-content: center;
     font-family: 'Special Elite', monospace;
     font-size: 8px;
-    color: rgba(40, 40, 40, 0.6);
+    color: rgba(56, 92, 133, 0.6);
     transform: rotate(-18deg);
     pointer-events: none;
     z-index: 2;
@@ -264,7 +356,7 @@ const reviews = [
     right: -25px;
     font-size: 14px;
     letter-spacing: -1.5px;
-    color: rgba(40, 40, 40, 0.4);
+    color: rgba(56, 92, 133, 0.4);
     transform: translateY(-4px);
   }
 
@@ -285,22 +377,41 @@ const reviews = [
     height: 18px;
     border-bottom: 1px solid rgba(0, 0, 0, 0.15);
     width: 100%;
+    position: relative; /* Acts as anchor for the absolute positioned text */
   }
 
-  .name-line {
-    display: flex;
-    align-items: flex-end;
+  /* Text positioned absolutely to guarantee truncation bounds */
+  .location-text {
+    font-family: 'Special Elite', monospace;
+    font-size: 9px;
+    color: rgba(40, 40, 40, 0.85);
+
+    position: absolute;
+    bottom: -1px; /* Sits right on the underline */
+    left: 8px;
+    right: 0; /* Forces a hard cutoff exactly at the edge of the line */
+    margin: 0;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   .author-name {
-    font-family: 'Kalam', cursive;
-    font-size: 13px;
-    font-weight: 700;
-    color: #2b2b2b;
-    padding-left: 8px;
-    position: relative;
-    z-index: 3;
-    margin-bottom: -3px;
+    font-family: 'Special Elite', monospace;
+    font-size: 10px;
+    font-weight: normal;
+    color: rgba(40, 40, 40, 0.85);
+
+    position: absolute;
+    bottom: -1px;
+    left: 8px;
+    right: 0;
+    margin: 0;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   /* Hover Effect: Magnifies slightly to read */
@@ -314,7 +425,7 @@ const reviews = [
     cursor: pointer;
     background: rgba(40, 30, 20, 0.7);
     color: #fdf5e6;
-    border: 1px solid #d46b53;
+    border: 1px solid #5c85a6;
     border-radius: 5px;
     width: 40px;
     height: 40px;
@@ -327,7 +438,7 @@ const reviews = [
   }
 
   .nav-btn:hover {
-    background: #d46b53;
+    background: #5c85a6;
     transform: scale(1.1);
   }
 </style>

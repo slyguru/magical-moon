@@ -1,0 +1,16 @@
+fragment PostParts on Post {
+  __typename
+  eyebrow
+  title
+  body
+  ctaPrimary {
+    __typename
+    label
+    href
+  }
+  ctaSecondary {
+    __typename
+    label
+    href
+  }
+}
