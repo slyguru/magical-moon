@@ -19,25 +19,23 @@ import {
 import { transformerFileName } from "./src/utils/transformers/fileName";
 import config from "./astro-paper.config";
 
-import cloudflare from "@astrojs/cloudflare";
-
 export default defineConfig({
   site: config.site.url,
 
   integrations: [
     mdx(),
-    sitemap({
-      filter: page =>
-        config.features?.showArchives !== false || !page.endsWith("/archives/"),
-    }),
+                            sitemap({
+                              filter: page =>
+                              config.features?.showArchives !== false || !page.endsWith("/archives/"),
+                            }),
   ],
 
   i18n: {
     locales: ["en"],
     defaultLocale: "en",
-    routing: {
-      prefixDefaultLocale: false,
-    },
+      routing: {
+        prefixDefaultLocale: false,
+      },
   },
 
   markdown: {
@@ -51,13 +49,13 @@ export default defineConfig({
     shikiConfig: {
       themes: { light: "min-light", dark: "night-owl" },
       defaultColor: false,
-      wrap: false,
-      transformers: [
-        transformerFileName({ style: "v2", hideDot: false }),
-        transformerNotationHighlight(),
-        transformerNotationWordHighlight(),
-        transformerNotationDiff({ matchAlgorithm: "v3" }),
-      ],
+        wrap: false,
+        transformers: [
+          transformerFileName({ style: "v2", hideDot: false }),
+                            transformerNotationHighlight(),
+                            transformerNotationWordHighlight(),
+                            transformerNotationDiff({ matchAlgorithm: "v3" }),
+        ],
     },
   },
 
@@ -70,10 +68,10 @@ export default defineConfig({
       name: "Google Sans Code",
       cssVariable: "--font-google-sans-code",
       provider: fontProviders.google(),
-      fallbacks: ["monospace"],
-      weights: [300, 400, 500, 600, 700],
-      styles: ["normal", "italic"],
-      formats: ["woff", "ttf"],
+                            fallbacks: ["monospace"],
+                            weights: [300, 400, 500, 600, 700],
+                            styles: ["normal", "italic"],
+                            formats: ["woff", "ttf"],
     },
   ],
 
@@ -90,6 +88,4 @@ export default defineConfig({
   experimental: {
     svgOptimizer: svgoOptimizer(),
   },
-
-  adapter: cloudflare(),
 });
