@@ -3,45 +3,23 @@
 
 const initialReviews = [
   {
-    name: "Didacus A.",
+    name: "Denis Kariuki",
     designation: "Mentee",
     program: "Moringa",
     country: "Kenya",
-    text: "The 'No Zero Day' mindset completely shifted how I approach my technical execution. The 120-minute SOC simulation gauntlets forced us to apply what we learned in a real-world, high-pressure environment."
+    city: "NAIROBI",
+    date: "JAN 10",
+    year: "2026",
+    text: "What sets his mentorship apart is the depth. We didn't just look at surface-level vulnerabilities; we mapped out the critical architectural building blocks of APIs to understand exactly how the infrastructure functions."
   },
   {
-    name: "Joygloria C.",
+    name: "S. Kinyua.",
     designation: "Mentee",
     program: "Moringa",
     country: "Kenya",
-    text: "Strict but incredibly effective. The evaluation rubrics for our Windows Server 2022 hardening projects pushed us to actually understand CIS benchmarks. You can't just skim the surface in this cohort."
-  },
-  {
-    name: "Denis B.",
-    designation: "Mentee",
-    program: "Moringa",
-    country: "Kenya",
-    text: "What sets this mentorship apart is the depth. We didn't just look at surface-level vulnerabilities; we mapped out the critical architectural building blocks of APIs to understand exactly how the infrastructure functions."
-  },
-  {
-    name: "Daniel O.",
-    designation: "Mentee",
-    program: "Moringa",
-    country: "Kenya",
-    text: "Beyond just Hack The Box labs, the guidance on navigating the truth about cybersecurity careers gave me a clear roadmap. It's a perfect balance of hands-on offensive frameworks and actionable career hacks."
-  },
-  {
-    name: "Persevere M.",
-    designation: "Mentee",
-    program: "Moringa",
-    country: "Kenya",
-    text: "Expect to be challenged. The standard for academic integrity is extremely high. The hands-on Phishing Unfolding rooms ensure you are executing technically, not just memorizing theory."
-  },
-  {
-    name: "S. K.",
-    designation: "Mentee",
-    program: "Moringa",
-    country: "Kenya",
+    city: "NAIROBI",
+    date: "FEB 18",
+    year: "2026",
     text: "Setting up multi-boot partitions with Kali Linux and Ubuntu under this level of guidance made hypervisors and Vagrant finally click for me. The hands-on troubleshooting is unmatched."
   },
   {
@@ -49,20 +27,29 @@ const initialReviews = [
     designation: "Mentee",
     program: "Moringa",
     country: "Kenya",
-    text: "The lab rubrics built around CTFs and the OSCP focus parameters are not for the faint of heart, but they prepare you for the real deal. You learn to prioritize technical execution over perfection."
+    city: "NAIROBI",
+    date: "MAR 01",
+    year: "2026",
+    text: "The lab rubrics built around CTFs and the OSCP focus parameters are not for the faint of heart, but they prepare you for the real deal. Brian helps you learn to prioritize technical execution over perfection."
   },
   {
     name: "J. T.",
     designation: "Mentee",
     program: "Moringa",
     country: "Kenya",
-    text: "The frameworks we covered for hardware redundancy and network resilience strategies completely changed how I view enterprise IT infrastructure. It's practical, industry-ready knowledge."
+    city: "NAIROBI",
+    date: "MAR 14",
+    year: "2026",
+    text: "The hands-on practice with Linux privilege escalation and log analysis gave me the exact confidence I needed to tackle technical interviews and real-world security challenges."
   },
   {
     name: "Michael N.",
     designation: "Mentee",
     program: "Moringa",
     country: "Kenya",
+    city: "NAIROBI",
+    date: "APR 02",
+    year: "2026",
     text: "The 'Truth About Cybersecurity Careers' webinar was a game-changer. Getting straight talk on domains, finding mentors, and navigating job applications was exactly what I needed."
   },
   {
@@ -70,6 +57,9 @@ const initialReviews = [
     designation: "Mentee",
     program: "Moringa",
     country: "Kenya",
+    city: "NAIROBI",
+    date: "APR 20",
+    year: "2026",
     text: "Flawless technical execution is the baseline here. The combination of hands-on TryHackMe labs and strict grading criteria ensures that when you leave, you actually know your stuff."
   },
   {
@@ -77,6 +67,9 @@ const initialReviews = [
     designation: "Mentee",
     program: "CyberGirls",
     country: "Cameroon",
+    city: "NAIROBI",
+    date: "JULY 31",
+    year: "2024",
     text: "I have been learning soo much from your classes. Thanks for the impactful sessions."
   },
   {
@@ -84,6 +77,9 @@ const initialReviews = [
     designation: "Mentee",
     program: "CyberGirls",
     country: "Nigeria",
+    city: "NAIROBI",
+    date: "JUL 31",
+    year: "2024",
     text: "I really enjoyed all your classes. Thank you so much sir."
   },
   {
@@ -91,6 +87,9 @@ const initialReviews = [
     designation: "Mentee",
     program: "CyberGirls",
     country: "Kenya",
+    city: "NAIROBI",
+    date: "JUL 30",
+    year: "2024",
     text: "It has been such informative sessions during CompTIA classes. You're a talented trainer sir."
   },
   {
@@ -98,6 +97,9 @@ const initialReviews = [
     designation: "Mentee",
     program: "CyberGirls",
     country: "Kenya",
+    city: "NAIROBI",
+    date: "JUL 29",
+    year: "2024",
     text: "Wish u joined CyberGirls earlier."
   },
   {
@@ -105,6 +107,9 @@ const initialReviews = [
     designation: "Mentee",
     program: "CyberGirls",
     country: "Nigeria",
+    city: "NAIROBI",
+    date: "AUG 04",
+    year: "2024",
     text: "With the help of our astute trainer, Brian Wafula, we also had an in-depth learning of cryptography methods, web application attacks and mitigation techniques."
   },
   {
@@ -112,6 +117,9 @@ const initialReviews = [
     designation: "Mentee",
     program: "CyberGirls",
     country: "Nigeria",
+    city: "NAIROBI",
+    date: "AUG 02",
+    year: "2024",
     text: "Live session with you has been amazing and insightful."
   }
 ];
@@ -148,7 +156,15 @@ const reviews = peaceReview ? [peaceReview, ...restOfReviews] : restOfReviews;
             <div class="address-section">
               <div class="stamp">PASS</div>
               <div class="postmark">
-                <span>NAIROBI<br>AUG 3<br>2026</span>
+                <div class="postmark-outer-ring">
+                  <div class="postmark-inner-ring">
+                    <span class="city">{review.city}</span>
+                    <span class="date-bar">
+                      <span class="date">{review.date}</span>
+                      <span class="year">{review.year}</span>
+                    </span>
+                  </div>
+                </div>
               </div>
               <div class="designation">{review.designation}</div>
 
@@ -327,37 +343,86 @@ const reviews = peaceReview ? [peaceReview, ...restOfReviews] : restOfReviews;
     letter-spacing: 0.5px;
   }
 
-  /* Faded blue ink postmark */
+  /* Faded blue ink postmark with Double Circles */
   .postmark {
     position: absolute;
-    top: 10px;
-    right: 32px;
-    width: 55px;
-    height: 55px;
-    border: 1.5px solid rgba(56, 92, 133, 0.5);
+    top: 7px;
+    right: 28px;
+    width: 66px;
+    height: 66px;
+    transform: rotate(-18deg);
+    pointer-events: none;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .postmark-outer-ring {
+    width: 100%;
+    height: 100%;
+    border: 1.5px solid rgba(56, 92, 133, 0.55);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 3px;
+    box-sizing: border-box;
+    background-color: rgba(253, 245, 230, 0.15);
+  }
+
+  .postmark-inner-ring {
+    width: 100%;
+    height: 100%;
+    border: 1px solid rgba(56, 92, 133, 0.45);
     border-radius: 50%;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     font-family: 'Special Elite', monospace;
-    font-size: 8px;
-    color: rgba(56, 92, 133, 0.6);
-    transform: rotate(-18deg);
-    pointer-events: none;
-    z-index: 2;
+    color: rgba(56, 92, 133, 0.75);
+    box-sizing: border-box;
+    padding: 0 4px;
   }
 
-  .postmark span { line-height: 1.2; text-align: center; }
+  .postmark .city {
+    font-size: 7px;
+    font-weight: bold;
+    letter-spacing: 0.6px;
+    text-transform: uppercase;
+    border-bottom: 1px solid rgba(56, 92, 133, 0.4);
+    padding-bottom: 2px;
+    margin-bottom: 2px;
+    width: 100%;
+    text-align: center;
+  }
+
+  .date-bar {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 4px;
+    width: 100%;
+  }
+
+  .postmark .date,
+  .postmark .year {
+    font-size: 6.5px;
+    letter-spacing: 0.2px;
+    text-transform: uppercase;
+    line-height: 1;
+  }
 
   .postmark::after {
     content: "≈≈≈≈≈";
     position: absolute;
-    right: -25px;
+    right: -26px;
+    top: 50%;
     font-size: 14px;
     letter-spacing: -1.5px;
     color: rgba(56, 92, 133, 0.4);
-    transform: translateY(-4px);
+    transform: translateY(-50%);
   }
 
   .designation {

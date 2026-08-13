@@ -46,7 +46,7 @@ const isActive = (path: string) => {
   class="app-layout flex flex-col items-center justify-between sm:flex-row"
 >
   <div
-    class="border-border bg-background relative flex w-full items-baseline justify-between border-b py-4 sm:items-center sm:py-6"
+    class="!border-accent bg-background relative flex w-full items-baseline justify-between border-b py-4 sm:items-center sm:py-6"
   >
     <a
       href={getRelativeLocaleUrl(locale, "")}
@@ -79,15 +79,7 @@ const isActive = (path: string) => {
             href={getRelativeLocaleUrl(locale, "posts")}
             class:list={["whitespace-nowrap", { "active-nav": isActive("/posts") }]}
           >
-            Writeups
-          </a>
-        </li>
-        <li class="col-span-2">
-          <a
-            href={getRelativeLocaleUrl(locale, "azure-how-tos")}
-            class:list={["whitespace-nowrap", { "active-nav": isActive("/azure-how-tos") }]}
-          >
-            How-To's
+            Posts
           </a>
         </li>
         <li class="col-span-2">

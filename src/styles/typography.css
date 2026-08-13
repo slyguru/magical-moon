@@ -121,3 +121,10 @@
     }
   }
 }
+.app-prose h2,
+.app-prose h3,
+.app-prose h4,
+.app-prose h5,
+.app-prose h6 {
+  @apply text-accent;
+}

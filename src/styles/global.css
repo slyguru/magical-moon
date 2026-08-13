@@ -78,3 +78,11 @@ article p,
 .prose p {
   text-align: justify;
 }
+/* --- OVERRIDE TYPOGRAPHY HEADING COLORS --- */
+article.app-prose h2,
+article.app-prose h3,
+article.app-prose h4,
+article.app-prose h5,
+article.app-prose h6 {
+  @apply !text-accent;
+}

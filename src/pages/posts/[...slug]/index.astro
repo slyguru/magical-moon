@@ -138,12 +138,13 @@ const ogImage = ogImageUrl
         "mt-8 w-full",
         "app-prose max-w-app",
         "prose-pre:bg-(--shiki-light-bg) dark:prose-pre:bg-(--shiki-dark-bg)",
+        "prose-headings:text-accent",
       ]}
     >
       <Content />
     </article>
 
-    <hr class="my-8 border-dashed" />
+    <div class="my-8 border-t-2 border-dashed border-accent"></div>
 
     <EditPost class="sm:hidden" {hideEditPost} {post} />
 
@@ -155,7 +156,7 @@ const ogImage = ogImageUrl
 
     <ShareLinks />
 
-    <hr class="my-8 border-dashed" />
+    <div class="my-8 border-t-2 border-dashed border-accent"></div>
 
     <AdjacentPostNav {prevPost} {nextPost} />
   </main>
