@@ -7,7 +7,7 @@ description: "Cyber Defense Analyst, Technical Mentor, and Independent Security 
 
 Hi, I am Brian Wafula—though friends and peers often call me **Guru**. My deep focus and technical prowess with Identity and Access Management (IAM) within the Azure cloud is actually the inspiration behind this domain. 
 
-Based in Nairobi, Kenya, I wear a few different hats in the cybersecurity space: I operate as a Cyber Defense Analyst for an MSSP, double as a Cybersecurity Technical Mentor at Moringa School, and work as an independent security researcher.
+Based in Nairobi, Kenya, I wear a few different hats in the cybersecurity space: I operate as a Cyber Defense Analyst for an MSSP, double as a Cybersecurity Technical Mentor at Moringa School, and work as an Independent Security Researcher.
 
 
 ### Technical Operations
@@ -25,7 +25,7 @@ I approach cybersecurity through a comprehensive, multi-disciplinary lens:
 
 * **Technical Mentorship & Capability Building:** As a technical trainer, I bridge the gap between abstract theory and flawless technical execution. I thrive on guiding massive cohorts of aspiring professionals through complex security paradigms, leading comprehensive training programs, and delivering straight talks on navigating cybersecurity careers and ensuring cyber hygeiene. My goal is to instill a No Zero Day mindset in every digital warrior I mentor—prioritizing deep architectural understanding over surface-level skimming.
 ### Beyond the Terminal
-When I step away from my Aula F75 keyboard and Maono PD200X microphone, you will likely find me outside. I believe in spending time outdoors to chase tranquility and declutter the brain. 
+When I step away from my Aula budget thock keyboard, you will likely find me outside. I firmly believe in spending time outdoors to chase tranquility and maintain mental clarity. 
 
 I also have a strong passion for hands-on automotive diagnostics. I spend my downtime wrenching on my jalopy—whether that involves troubleshooting mechanical quirks or getting under the chassis for hands-on maintenance. When running electronic system diagnostics, I apply the exact same methodology as live incident handling: peeling back the problem layer by layer and systematically ruling out variables until I isolate the root cause.
 

@@ -14,8 +14,8 @@ export default defineAstroPaperConfig({
     googleVerification: "nk4Vu7GZ9KtlKdfqizo9V07-6yOnUUgTpGfonLcVRfU",
   },
   posts: {
-    perPage: 4,
-    perIndex: 4,
+    perPage: 8,
+    perIndex: 8,
     scheduledPostMargin: 15 * 60 * 1000,
   },
   features: {
@@ -30,17 +30,14 @@ export default defineAstroPaperConfig({
     search: "pagefind",
   },
   socials: [
-    { name: "github",   url: "https://github.com/yourusername" },
-    { name: "x",        url: "https://x.com/yourusername" },
-    { name: "linkedin", url: "https://www.linkedin.com/in/yourusername/" },
-    { name: "mail",     url: "mailto:yourmail@gmail.com" },
+    { name: "x",        url: "https://x.com/bugshurt" },
+    { name: "linkedin", url: "https://www.linkedin.com/in/code92/" },
+    // { name: "mail",     url: "mailto:yourmail@gmail.com" },
   ],
   shareLinks: [
     { name: "whatsapp", url: "https://wa.me/?text=" },
     { name: "facebook", url: "https://www.facebook.com/sharer.php?u=" },
     { name: "x",        url: "https://x.com/intent/post?url=" },
     { name: "telegram", url: "https://t.me/share/url?url=" },
-    { name: "pinterest", url: "https://pinterest.com/pin/create/button/?url=" },
-    { name: "mail",     url: "mailto:?subject=See%20this%20post&body=" },
   ],
 });

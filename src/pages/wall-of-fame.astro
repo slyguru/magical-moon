@@ -32,9 +32,17 @@ const { Content } = await render(fame);
     {/* Renders your markdown text (e.g., intro paragraphs) */}
     <Content />
 
-    {/* 2. Add the Postcard Slider below the markdown content */}
-    <div class="mt-12 not-prose">
+    {/* 2. Postcard Component */}
+    <div class="mt-10 not-prose">
       <PostcardReviews />
+    </div>
+
+    {/* 3. Additional text section added below the postcard */}
+    <div class="mt-4 prose max-w-none app-prose">
+      <h3 class="font-semibold text-skin-base">Looking to Collaborate?</h3>
+      <p class="text-skin-muted">
+        I welcome connections across the cybersecurity spectrum. Whether you are an enthusiast looking for guidance, an organization exploring security auditing, cyber hygiene training, or a team with an exciting cybersecurity opportunity to share, I would love to hear from you. Feel free to connect via the <a href="/contact" class="!text-[color:rgba(var(--color-accent),1)] underline decoration-dashed underline-offset-4 hover:opacity-80 transition-opacity">contact form</a>.
+      </p>
     </div>
   </Main>
 

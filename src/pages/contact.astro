@@ -1,0 +1,29 @@
+---
+// src/pages/contact.astro
+import Layout from "../layouts/Layout.astro";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+import Breadcrumbs from "../components/Breadcrumb.astro";
+import ContactForm from "../components/ContactForm.astro";
+import config from "../config";
+---
+
+<Layout title={`Contact | ${config.site.title}`}>
+  <Header activeNav="contact" />
+
+  <Breadcrumbs />
+
+  <main id="main-content" class="mx-auto w-full max-w-3xl px-4 pb-12">
+
+
+    <!-- Matched exact Astro Paper theme classes for description (italic, specific margins) -->
+    <p class="mb-6 mt-2 italic">
+      Get in touch for collaborations, technical discussions, submit reviews or inquiries.
+    </p>
+
+    <ContactForm />
+
+  </main>
+
+  <Footer />
+</Layout>
