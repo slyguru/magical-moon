@@ -56,10 +56,13 @@ type Query {
   document(collection: String, relativePath: String): DocumentNode!
   post(relativePath: String): Post!
   postConnection(before: String, after: String, first: Float, last: Float, sort: String, filter: PostFilter): PostConnection!
+  post_mdx(relativePath: String): Post_mdx!
+  post_mdxConnection(before: String, after: String, first: Float, last: Float, sort: String, filter: Post_mdxFilter): Post_mdxConnection!
 }
 
 input DocumentFilter {
   post: PostFilter
+  post_mdx: Post_mdxFilter
 }
 
 type DocumentConnectionEdges {
@@ -85,24 +88,19 @@ type Collection {
   documents(before: String, after: String, first: Float, last: Float, sort: String, filter: DocumentFilter, folder: String): DocumentConnection!
 }
 
-union DocumentNode = Post | Folder
-
-type PostCtaPrimary {
-  label: String
-  href: String
-}
-
-type PostCtaSecondary {
-  label: String
-  href: String
-}
+union DocumentNode = Post | Post_mdx | Folder
 
 type Post implements Node & Document {
-  eyebrow: String
   title: String!
+  author: String!
+  pubDatetime: String!
+  modDatetime: String
+  slug: String
+  featured: Boolean
+  draft: Boolean
+  tags: [String!]!
+  description: String!
   body: JSON
-  ctaPrimary: PostCtaPrimary
-  ctaSecondary: PostCtaSecondary
   id: ID!
   _sys: SystemInfo!
   _values: JSON!
@@ -115,28 +113,36 @@ input StringFilter {
   in: [String]
 }
 
+input DatetimeFilter {
+  after: String
+  before: String
+  eq: String
+  exists: Boolean
+  in: [String]
+}
+
+input BooleanFilter {
+  eq: Boolean
+  exists: Boolean
+}
+
 input RichTextFilter {
   startsWith: String
   eq: String
   exists: Boolean
 }
 
-input PostCtaPrimaryFilter {
-  label: StringFilter
-  href: StringFilter
-}
-
-input PostCtaSecondaryFilter {
-  label: StringFilter
-  href: StringFilter
-}
-
 input PostFilter {
-  eyebrow: StringFilter
   title: StringFilter
+  author: StringFilter
+  pubDatetime: DatetimeFilter
+  modDatetime: DatetimeFilter
+  slug: StringFilter
+  featured: BooleanFilter
+  draft: BooleanFilter
+  tags: StringFilter
+  description: StringFilter
   body: RichTextFilter
-  ctaPrimary: PostCtaPrimaryFilter
-  ctaSecondary: PostCtaSecondaryFilter
 }
 
 type PostConnectionEdges {
@@ -150,6 +156,46 @@ type PostConnection implements Connection {
   edges: [PostConnectionEdges]
 }
 
+type Post_mdx implements Node & Document {
+  title: String!
+  author: String!
+  pubDatetime: String!
+  modDatetime: String
+  slug: String
+  featured: Boolean
+  draft: Boolean
+  tags: [String!]!
+  description: String!
+  body: JSON
+  id: ID!
+  _sys: SystemInfo!
+  _values: JSON!
+}
+
+input Post_mdxFilter {
+  title: StringFilter
+  author: StringFilter
+  pubDatetime: DatetimeFilter
+  modDatetime: DatetimeFilter
+  slug: StringFilter
+  featured: BooleanFilter
+  draft: BooleanFilter
+  tags: StringFilter
+  description: StringFilter
+  body: RichTextFilter
+}
+
+type Post_mdxConnectionEdges {
+  cursor: String!
+  node: Post_mdx
+}
+
+type Post_mdxConnection implements Connection {
+  pageInfo: PageInfo!
+  totalCount: Float!
+  edges: [Post_mdxConnectionEdges]
+}
+
 type Mutation {
   addPendingDocument(collection: String!, relativePath: String!, template: String): DocumentNode!
   updateDocument(collection: String, relativePath: String!, params: DocumentUpdateMutation!): DocumentNode!
@@ -158,33 +204,45 @@ type Mutation {
   createFolder(collection: String, relativePath: String!): DocumentNode!
   updatePost(relativePath: String!, params: PostMutation!): Post!
   createPost(relativePath: String!, params: PostMutation!): Post!
+  updatePost_mdx(relativePath: String!, params: Post_mdxMutation!): Post_mdx!
+  createPost_mdx(relativePath: String!, params: Post_mdxMutation!): Post_mdx!
 }
 
 input DocumentUpdateMutation {
   post: PostMutation
+  post_mdx: Post_mdxMutation
   relativePath: String
 }
 
 input DocumentMutation {
   post: PostMutation
-}
-
-input PostCtaPrimaryMutation {
-  label: String
-  href: String
-}
-
-input PostCtaSecondaryMutation {
-  label: String
-  href: String
+  post_mdx: Post_mdxMutation
 }
 
 input PostMutation {
-  eyebrow: String
   title: String
+  author: String
+  pubDatetime: String
+  modDatetime: String
+  slug: String
+  featured: Boolean
+  draft: Boolean
+  tags: [String]
+  description: String
   body: JSON
-  ctaPrimary: PostCtaPrimaryMutation
-  ctaSecondary: PostCtaSecondaryMutation
+}
+
+input Post_mdxMutation {
+  title: String
+  author: String
+  pubDatetime: String
+  modDatetime: String
+  slug: String
+  featured: Boolean
+  draft: Boolean
+  tags: [String]
+  description: String
+  body: JSON
 }
 
 schema {

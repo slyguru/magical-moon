@@ -1,16 +1,27 @@
 fragment PostParts on Post {
   __typename
-  eyebrow
   title
+  author
+  pubDatetime
+  modDatetime
+  slug
+  featured
+  draft
+  tags
+  description
   body
-  ctaPrimary {
-    __typename
-    label
-    href
-  }
-  ctaSecondary {
-    __typename
-    label
-    href
-  }
+}
+
+fragment Post_mdxParts on Post_mdx {
+  __typename
+  title
+  author
+  pubDatetime
+  modDatetime
+  slug
+  featured
+  draft
+  tags
+  description
+  body
 }

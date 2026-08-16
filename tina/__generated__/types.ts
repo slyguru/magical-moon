@@ -84,6 +84,8 @@ export type Query = {
   document: DocumentNode;
   post: Post;
   postConnection: PostConnection;
+  post_mdx: Post_Mdx;
+  post_mdxConnection: Post_MdxConnection;
 };
 
 
@@ -122,8 +124,24 @@ export type QueryPostConnectionArgs = {
   filter?: InputMaybe<PostFilter>;
 };
 
+
+export type QueryPost_MdxArgs = {
+  relativePath?: InputMaybe<Scalars['String']['input']>;
+};
+
+
+export type QueryPost_MdxConnectionArgs = {
+  before?: InputMaybe<Scalars['String']['input']>;
+  after?: InputMaybe<Scalars['String']['input']>;
+  first?: InputMaybe<Scalars['Float']['input']>;
+  last?: InputMaybe<Scalars['Float']['input']>;
+  sort?: InputMaybe<Scalars['String']['input']>;
+  filter?: InputMaybe<Post_MdxFilter>;
+};
+
 export type DocumentFilter = {
   post?: InputMaybe<PostFilter>;
+  post_mdx?: InputMaybe<Post_MdxFilter>;
 };
 
 export type DocumentConnectionEdges = {
@@ -163,27 +181,20 @@ export type CollectionDocumentsArgs = {
   folder?: InputMaybe<Scalars['String']['input']>;
 };
 
-export type DocumentNode = Post | Folder;
-
-export type PostCtaPrimary = {
-  __typename?: 'PostCtaPrimary';
-  label?: Maybe<Scalars['String']['output']>;
-  href?: Maybe<Scalars['String']['output']>;
-};
-
-export type PostCtaSecondary = {
-  __typename?: 'PostCtaSecondary';
-  label?: Maybe<Scalars['String']['output']>;
-  href?: Maybe<Scalars['String']['output']>;
-};
+export type DocumentNode = Post | Post_Mdx | Folder;
 
 export type Post = Node & Document & {
   __typename?: 'Post';
-  eyebrow?: Maybe<Scalars['String']['output']>;
   title: Scalars['String']['output'];
+  author: Scalars['String']['output'];
+  pubDatetime: Scalars['String']['output'];
+  modDatetime?: Maybe<Scalars['String']['output']>;
+  slug?: Maybe<Scalars['String']['output']>;
+  featured?: Maybe<Scalars['Boolean']['output']>;
+  draft?: Maybe<Scalars['Boolean']['output']>;
+  tags: Array<Scalars['String']['output']>;
+  description: Scalars['String']['output'];
   body?: Maybe<Scalars['JSON']['output']>;
-  ctaPrimary?: Maybe<PostCtaPrimary>;
-  ctaSecondary?: Maybe<PostCtaSecondary>;
   id: Scalars['ID']['output'];
   _sys: SystemInfo;
   _values: Scalars['JSON']['output'];
@@ -196,28 +207,36 @@ export type StringFilter = {
   in?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
 };
 
+export type DatetimeFilter = {
+  after?: InputMaybe<Scalars['String']['input']>;
+  before?: InputMaybe<Scalars['String']['input']>;
+  eq?: InputMaybe<Scalars['String']['input']>;
+  exists?: InputMaybe<Scalars['Boolean']['input']>;
+  in?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
+};
+
+export type BooleanFilter = {
+  eq?: InputMaybe<Scalars['Boolean']['input']>;
+  exists?: InputMaybe<Scalars['Boolean']['input']>;
+};
+
 export type RichTextFilter = {
   startsWith?: InputMaybe<Scalars['String']['input']>;
   eq?: InputMaybe<Scalars['String']['input']>;
   exists?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
-export type PostCtaPrimaryFilter = {
-  label?: InputMaybe<StringFilter>;
-  href?: InputMaybe<StringFilter>;
-};
-
-export type PostCtaSecondaryFilter = {
-  label?: InputMaybe<StringFilter>;
-  href?: InputMaybe<StringFilter>;
-};
-
 export type PostFilter = {
-  eyebrow?: InputMaybe<StringFilter>;
   title?: InputMaybe<StringFilter>;
+  author?: InputMaybe<StringFilter>;
+  pubDatetime?: InputMaybe<DatetimeFilter>;
+  modDatetime?: InputMaybe<DatetimeFilter>;
+  slug?: InputMaybe<StringFilter>;
+  featured?: InputMaybe<BooleanFilter>;
+  draft?: InputMaybe<BooleanFilter>;
+  tags?: InputMaybe<StringFilter>;
+  description?: InputMaybe<StringFilter>;
   body?: InputMaybe<RichTextFilter>;
-  ctaPrimary?: InputMaybe<PostCtaPrimaryFilter>;
-  ctaSecondary?: InputMaybe<PostCtaSecondaryFilter>;
 };
 
 export type PostConnectionEdges = {
@@ -233,6 +252,49 @@ export type PostConnection = Connection & {
   edges?: Maybe<Array<Maybe<PostConnectionEdges>>>;
 };
 
+export type Post_Mdx = Node & Document & {
+  __typename?: 'Post_mdx';
+  title: Scalars['String']['output'];
+  author: Scalars['String']['output'];
+  pubDatetime: Scalars['String']['output'];
+  modDatetime?: Maybe<Scalars['String']['output']>;
+  slug?: Maybe<Scalars['String']['output']>;
+  featured?: Maybe<Scalars['Boolean']['output']>;
+  draft?: Maybe<Scalars['Boolean']['output']>;
+  tags: Array<Scalars['String']['output']>;
+  description: Scalars['String']['output'];
+  body?: Maybe<Scalars['JSON']['output']>;
+  id: Scalars['ID']['output'];
+  _sys: SystemInfo;
+  _values: Scalars['JSON']['output'];
+};
+
+export type Post_MdxFilter = {
+  title?: InputMaybe<StringFilter>;
+  author?: InputMaybe<StringFilter>;
+  pubDatetime?: InputMaybe<DatetimeFilter>;
+  modDatetime?: InputMaybe<DatetimeFilter>;
+  slug?: InputMaybe<StringFilter>;
+  featured?: InputMaybe<BooleanFilter>;
+  draft?: InputMaybe<BooleanFilter>;
+  tags?: InputMaybe<StringFilter>;
+  description?: InputMaybe<StringFilter>;
+  body?: InputMaybe<RichTextFilter>;
+};
+
+export type Post_MdxConnectionEdges = {
+  __typename?: 'Post_mdxConnectionEdges';
+  cursor: Scalars['String']['output'];
+  node?: Maybe<Post_Mdx>;
+};
+
+export type Post_MdxConnection = Connection & {
+  __typename?: 'Post_mdxConnection';
+  pageInfo: PageInfo;
+  totalCount: Scalars['Float']['output'];
+  edges?: Maybe<Array<Maybe<Post_MdxConnectionEdges>>>;
+};
+
 export type Mutation = {
   __typename?: 'Mutation';
   addPendingDocument: DocumentNode;
@@ -242,6 +304,8 @@ export type Mutation = {
   createFolder: DocumentNode;
   updatePost: Post;
   createPost: Post;
+  updatePost_mdx: Post_Mdx;
+  createPost_mdx: Post_Mdx;
 };
 
 
@@ -289,41 +353,65 @@ export type MutationCreatePostArgs = {
   params: PostMutation;
 };
 
+
+export type MutationUpdatePost_MdxArgs = {
+  relativePath: Scalars['String']['input'];
+  params: Post_MdxMutation;
+};
+
+
+export type MutationCreatePost_MdxArgs = {
+  relativePath: Scalars['String']['input'];
+  params: Post_MdxMutation;
+};
+
 export type DocumentUpdateMutation = {
   post?: InputMaybe<PostMutation>;
+  post_mdx?: InputMaybe<Post_MdxMutation>;
   relativePath?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type DocumentMutation = {
   post?: InputMaybe<PostMutation>;
-};
-
-export type PostCtaPrimaryMutation = {
-  label?: InputMaybe<Scalars['String']['input']>;
-  href?: InputMaybe<Scalars['String']['input']>;
-};
-
-export type PostCtaSecondaryMutation = {
-  label?: InputMaybe<Scalars['String']['input']>;
-  href?: InputMaybe<Scalars['String']['input']>;
+  post_mdx?: InputMaybe<Post_MdxMutation>;
 };
 
 export type PostMutation = {
-  eyebrow?: InputMaybe<Scalars['String']['input']>;
   title?: InputMaybe<Scalars['String']['input']>;
+  author?: InputMaybe<Scalars['String']['input']>;
+  pubDatetime?: InputMaybe<Scalars['String']['input']>;
+  modDatetime?: InputMaybe<Scalars['String']['input']>;
+  slug?: InputMaybe<Scalars['String']['input']>;
+  featured?: InputMaybe<Scalars['Boolean']['input']>;
+  draft?: InputMaybe<Scalars['Boolean']['input']>;
+  tags?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
+  description?: InputMaybe<Scalars['String']['input']>;
   body?: InputMaybe<Scalars['JSON']['input']>;
-  ctaPrimary?: InputMaybe<PostCtaPrimaryMutation>;
-  ctaSecondary?: InputMaybe<PostCtaSecondaryMutation>;
 };
 
-export type PostPartsFragment = { __typename: 'Post', eyebrow?: string | null, title: string, body?: any | null, ctaPrimary?: { __typename: 'PostCtaPrimary', label?: string | null, href?: string | null } | null, ctaSecondary?: { __typename: 'PostCtaSecondary', label?: string | null, href?: string | null } | null };
+export type Post_MdxMutation = {
+  title?: InputMaybe<Scalars['String']['input']>;
+  author?: InputMaybe<Scalars['String']['input']>;
+  pubDatetime?: InputMaybe<Scalars['String']['input']>;
+  modDatetime?: InputMaybe<Scalars['String']['input']>;
+  slug?: InputMaybe<Scalars['String']['input']>;
+  featured?: InputMaybe<Scalars['Boolean']['input']>;
+  draft?: InputMaybe<Scalars['Boolean']['input']>;
+  tags?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
+  description?: InputMaybe<Scalars['String']['input']>;
+  body?: InputMaybe<Scalars['JSON']['input']>;
+};
+
+export type PostPartsFragment = { __typename: 'Post', title: string, author: string, pubDatetime: string, modDatetime?: string | null, slug?: string | null, featured?: boolean | null, draft?: boolean | null, tags: Array<string>, description: string, body?: any | null };
+
+export type Post_MdxPartsFragment = { __typename: 'Post_mdx', title: string, author: string, pubDatetime: string, modDatetime?: string | null, slug?: string | null, featured?: boolean | null, draft?: boolean | null, tags: Array<string>, description: string, body?: any | null };
 
 export type PostQueryVariables = Exact<{
   relativePath: Scalars['String']['input'];
 }>;
 
 
-export type PostQuery = { __typename?: 'Query', post: { __typename: 'Post', id: string, eyebrow?: string | null, title: string, body?: any | null, _sys: { __typename?: 'SystemInfo', filename: string, basename: string, hasReferences?: boolean | null, breadcrumbs: Array<string>, path: string, relativePath: string, extension: string }, ctaPrimary?: { __typename: 'PostCtaPrimary', label?: string | null, href?: string | null } | null, ctaSecondary?: { __typename: 'PostCtaSecondary', label?: string | null, href?: string | null } | null } };
+export type PostQuery = { __typename?: 'Query', post: { __typename: 'Post', id: string, title: string, author: string, pubDatetime: string, modDatetime?: string | null, slug?: string | null, featured?: boolean | null, draft?: boolean | null, tags: Array<string>, description: string, body?: any | null, _sys: { __typename?: 'SystemInfo', filename: string, basename: string, hasReferences?: boolean | null, breadcrumbs: Array<string>, path: string, relativePath: string, extension: string } } };
 
 export type PostConnectionQueryVariables = Exact<{
   before?: InputMaybe<Scalars['String']['input']>;
@@ -335,24 +423,55 @@ export type PostConnectionQueryVariables = Exact<{
 }>;
 
 
-export type PostConnectionQuery = { __typename?: 'Query', postConnection: { __typename?: 'PostConnection', totalCount: number, pageInfo: { __typename?: 'PageInfo', hasPreviousPage: boolean, hasNextPage: boolean, startCursor: string, endCursor: string }, edges?: Array<{ __typename?: 'PostConnectionEdges', cursor: string, node?: { __typename: 'Post', id: string, eyebrow?: string | null, title: string, body?: any | null, _sys: { __typename?: 'SystemInfo', filename: string, basename: string, hasReferences?: boolean | null, breadcrumbs: Array<string>, path: string, relativePath: string, extension: string }, ctaPrimary?: { __typename: 'PostCtaPrimary', label?: string | null, href?: string | null } | null, ctaSecondary?: { __typename: 'PostCtaSecondary', label?: string | null, href?: string | null } | null } | null } | null> | null } };
+export type PostConnectionQuery = { __typename?: 'Query', postConnection: { __typename?: 'PostConnection', totalCount: number, pageInfo: { __typename?: 'PageInfo', hasPreviousPage: boolean, hasNextPage: boolean, startCursor: string, endCursor: string }, edges?: Array<{ __typename?: 'PostConnectionEdges', cursor: string, node?: { __typename: 'Post', id: string, title: string, author: string, pubDatetime: string, modDatetime?: string | null, slug?: string | null, featured?: boolean | null, draft?: boolean | null, tags: Array<string>, description: string, body?: any | null, _sys: { __typename?: 'SystemInfo', filename: string, basename: string, hasReferences?: boolean | null, breadcrumbs: Array<string>, path: string, relativePath: string, extension: string } } | null } | null> | null } };
+
+export type Post_MdxQueryVariables = Exact<{
+  relativePath: Scalars['String']['input'];
+}>;
+
+
+export type Post_MdxQuery = { __typename?: 'Query', post_mdx: { __typename: 'Post_mdx', id: string, title: string, author: string, pubDatetime: string, modDatetime?: string | null, slug?: string | null, featured?: boolean | null, draft?: boolean | null, tags: Array<string>, description: string, body?: any | null, _sys: { __typename?: 'SystemInfo', filename: string, basename: string, hasReferences?: boolean | null, breadcrumbs: Array<string>, path: string, relativePath: string, extension: string } } };
+
+export type Post_MdxConnectionQueryVariables = Exact<{
+  before?: InputMaybe<Scalars['String']['input']>;
+  after?: InputMaybe<Scalars['String']['input']>;
+  first?: InputMaybe<Scalars['Float']['input']>;
+  last?: InputMaybe<Scalars['Float']['input']>;
+  sort?: InputMaybe<Scalars['String']['input']>;
+  filter?: InputMaybe<Post_MdxFilter>;
+}>;
+
+
+export type Post_MdxConnectionQuery = { __typename?: 'Query', post_mdxConnection: { __typename?: 'Post_mdxConnection', totalCount: number, pageInfo: { __typename?: 'PageInfo', hasPreviousPage: boolean, hasNextPage: boolean, startCursor: string, endCursor: string }, edges?: Array<{ __typename?: 'Post_mdxConnectionEdges', cursor: string, node?: { __typename: 'Post_mdx', id: string, title: string, author: string, pubDatetime: string, modDatetime?: string | null, slug?: string | null, featured?: boolean | null, draft?: boolean | null, tags: Array<string>, description: string, body?: any | null, _sys: { __typename?: 'SystemInfo', filename: string, basename: string, hasReferences?: boolean | null, breadcrumbs: Array<string>, path: string, relativePath: string, extension: string } } | null } | null> | null } };
 
 export const PostPartsFragmentDoc = gql`
     fragment PostParts on Post {
   __typename
-  eyebrow
   title
+  author
+  pubDatetime
+  modDatetime
+  slug
+  featured
+  draft
+  tags
+  description
   body
-  ctaPrimary {
-    __typename
-    label
-    href
-  }
-  ctaSecondary {
-    __typename
-    label
-    href
-  }
+}
+    `;
+export const Post_MdxPartsFragmentDoc = gql`
+    fragment Post_mdxParts on Post_mdx {
+  __typename
+  title
+  author
+  pubDatetime
+  modDatetime
+  slug
+  featured
+  draft
+  tags
+  description
+  body
 }
     `;
 export const PostDocument = gql`
@@ -412,6 +531,63 @@ export const PostConnectionDocument = gql`
   }
 }
     ${PostPartsFragmentDoc}`;
+export const Post_MdxDocument = gql`
+    query post_mdx($relativePath: String!) {
+  post_mdx(relativePath: $relativePath) {
+    ... on Document {
+      _sys {
+        filename
+        basename
+        hasReferences
+        breadcrumbs
+        path
+        relativePath
+        extension
+      }
+      id
+    }
+    ...Post_mdxParts
+  }
+}
+    ${Post_MdxPartsFragmentDoc}`;
+export const Post_MdxConnectionDocument = gql`
+    query post_mdxConnection($before: String, $after: String, $first: Float, $last: Float, $sort: String, $filter: Post_mdxFilter) {
+  post_mdxConnection(
+    before: $before
+    after: $after
+    first: $first
+    last: $last
+    sort: $sort
+    filter: $filter
+  ) {
+    pageInfo {
+      hasPreviousPage
+      hasNextPage
+      startCursor
+      endCursor
+    }
+    totalCount
+    edges {
+      cursor
+      node {
+        ... on Document {
+          _sys {
+            filename
+            basename
+            hasReferences
+            breadcrumbs
+            path
+            relativePath
+            extension
+          }
+          id
+        }
+        ...Post_mdxParts
+      }
+    }
+  }
+}
+    ${Post_MdxPartsFragmentDoc}`;
 export type Requester<C= {}> = <R, V>(doc: DocumentNode, vars?: V, options?: C) => Promise<R>
   export function getSdk<C>(requester: Requester<C>) {
     return {
@@ -420,6 +596,12 @@ export type Requester<C= {}> = <R, V>(doc: DocumentNode, vars?: V, options?: C) 
       },
     postConnection(variables?: PostConnectionQueryVariables, options?: C): Promise<{data: PostConnectionQuery, errors?: { message: string, locations: { line: number, column: number }[], path: string[] }[], variables: PostConnectionQueryVariables, query: string}> {
         return requester<{data: PostConnectionQuery, errors?: { message: string, locations: { line: number, column: number }[], path: string[] }[], variables: PostConnectionQueryVariables, query: string}, PostConnectionQueryVariables>(PostConnectionDocument, variables, options);
+      },
+    post_mdx(variables: Post_MdxQueryVariables, options?: C): Promise<{data: Post_MdxQuery, errors?: { message: string, locations: { line: number, column: number }[], path: string[] }[], variables: Post_MdxQueryVariables, query: string}> {
+        return requester<{data: Post_MdxQuery, errors?: { message: string, locations: { line: number, column: number }[], path: string[] }[], variables: Post_MdxQueryVariables, query: string}, Post_MdxQueryVariables>(Post_MdxDocument, variables, options);
+      },
+    post_mdxConnection(variables?: Post_MdxConnectionQueryVariables, options?: C): Promise<{data: Post_MdxConnectionQuery, errors?: { message: string, locations: { line: number, column: number }[], path: string[] }[], variables: Post_MdxConnectionQueryVariables, query: string}> {
+        return requester<{data: Post_MdxConnectionQuery, errors?: { message: string, locations: { line: number, column: number }[], path: string[] }[], variables: Post_MdxConnectionQueryVariables, query: string}, Post_MdxConnectionQueryVariables>(Post_MdxConnectionDocument, variables, options);
       }
     };
   }

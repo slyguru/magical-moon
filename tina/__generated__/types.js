@@ -8,19 +8,31 @@ export function gql(strings, ...args) {
 export const PostPartsFragmentDoc = gql`
     fragment PostParts on Post {
   __typename
-  eyebrow
   title
+  author
+  pubDatetime
+  modDatetime
+  slug
+  featured
+  draft
+  tags
+  description
   body
-  ctaPrimary {
-    __typename
-    label
-    href
-  }
-  ctaSecondary {
-    __typename
-    label
-    href
-  }
+}
+    `;
+export const Post_MdxPartsFragmentDoc = gql`
+    fragment Post_mdxParts on Post_mdx {
+  __typename
+  title
+  author
+  pubDatetime
+  modDatetime
+  slug
+  featured
+  draft
+  tags
+  description
+  body
 }
     `;
 export const PostDocument = gql`
@@ -80,6 +92,63 @@ export const PostConnectionDocument = gql`
   }
 }
     ${PostPartsFragmentDoc}`;
+export const Post_MdxDocument = gql`
+    query post_mdx($relativePath: String!) {
+  post_mdx(relativePath: $relativePath) {
+    ... on Document {
+      _sys {
+        filename
+        basename
+        hasReferences
+        breadcrumbs
+        path
+        relativePath
+        extension
+      }
+      id
+    }
+    ...Post_mdxParts
+  }
+}
+    ${Post_MdxPartsFragmentDoc}`;
+export const Post_MdxConnectionDocument = gql`
+    query post_mdxConnection($before: String, $after: String, $first: Float, $last: Float, $sort: String, $filter: Post_mdxFilter) {
+  post_mdxConnection(
+    before: $before
+    after: $after
+    first: $first
+    last: $last
+    sort: $sort
+    filter: $filter
+  ) {
+    pageInfo {
+      hasPreviousPage
+      hasNextPage
+      startCursor
+      endCursor
+    }
+    totalCount
+    edges {
+      cursor
+      node {
+        ... on Document {
+          _sys {
+            filename
+            basename
+            hasReferences
+            breadcrumbs
+            path
+            relativePath
+            extension
+          }
+          id
+        }
+        ...Post_mdxParts
+      }
+    }
+  }
+}
+    ${Post_MdxPartsFragmentDoc}`;
 export function getSdk(requester) {
   return {
     post(variables, options) {
@@ -87,6 +156,12 @@ export function getSdk(requester) {
     },
     postConnection(variables, options) {
       return requester(PostConnectionDocument, variables, options);
+    },
+    post_mdx(variables, options) {
+      return requester(Post_MdxDocument, variables, options);
+    },
+    post_mdxConnection(variables, options) {
+      return requester(Post_MdxConnectionDocument, variables, options);
     }
   };
 }

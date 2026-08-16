@@ -1,20 +1,28 @@
-// tina/config.ts
 import { defineConfig } from "tinacms";
-var branch = process.env.CF_PAGES_BRANCH || process.env.GITHUB_BRANCH || process.env.HEAD || "main";
-var config_default = defineConfig({
+
+// Cloudflare Pages automatically injects CF_PAGES_BRANCH during build
+const branch =
+  process.env.CF_PAGES_BRANCH ||
+  process.env.GITHUB_BRANCH ||
+  process.env.HEAD ||
+  "main";
+
+export default defineConfig({
   branch,
+
   // Get these from tina.io and set them in your Cloudflare Pages environment variables
   clientId: process.env.TINA_CLIENT_ID,
   token: process.env.TINA_TOKEN,
+
   build: {
     outputFolder: "admin",
-    publicFolder: "public"
+    publicFolder: "public",
   },
   media: {
     tina: {
       mediaRoot: "assets",
-      publicFolder: "public"
-    }
+      publicFolder: "public",
+    },
   },
   schema: {
     collections: [
@@ -26,13 +34,13 @@ var config_default = defineConfig({
         format: "md",
         ui: {
           filename: {
-            slugify: (values) => {
-              return `${values?.title?.toLowerCase().replace(/[^a-z0-9]/g, "-") || "new-post"}`;
-            }
+            slugify: values => {
+              return `${values?.title?.toLowerCase().replace(/[^a-z0-9]/g, '-') || 'new-post'}`
+            },
           },
           router: ({ document }) => {
             return `/posts/${document._sys.filename}`;
-          }
+          },
         },
         fields: [
           { type: "string", name: "title", label: "Title", isTitle: true, required: true },
@@ -44,8 +52,8 @@ var config_default = defineConfig({
           { type: "boolean", name: "draft", label: "Draft" },
           { type: "string", name: "tags", label: "Tags", list: true, required: true },
           { type: "string", name: "description", label: "Description", required: true },
-          { type: "rich-text", name: "body", label: "Body", isBody: true }
-        ]
+          { type: "rich-text", name: "body", label: "Body", isBody: true },
+        ],
       },
       // COLLECTION 2: MDX Format (.mdx)
       {
@@ -55,13 +63,13 @@ var config_default = defineConfig({
         format: "mdx",
         ui: {
           filename: {
-            slugify: (values) => {
-              return `${values?.title?.toLowerCase().replace(/[^a-z0-9]/g, "-") || "new-post"}`;
-            }
+            slugify: values => {
+              return `${values?.title?.toLowerCase().replace(/[^a-z0-9]/g, '-') || 'new-post'}`
+            },
           },
           router: ({ document }) => {
             return `/posts/${document._sys.filename}`;
-          }
+          },
         },
         fields: [
           { type: "string", name: "title", label: "Title", isTitle: true, required: true },
@@ -73,12 +81,9 @@ var config_default = defineConfig({
           { type: "boolean", name: "draft", label: "Draft" },
           { type: "string", name: "tags", label: "Tags", list: true, required: true },
           { type: "string", name: "description", label: "Description", required: true },
-          { type: "rich-text", name: "body", label: "Body", isBody: true }
-        ]
-      }
-    ]
-  }
+          { type: "rich-text", name: "body", label: "Body", isBody: true },
+        ],
+      },
+    ],
+  },
 });
-export {
-  config_default as default
-};
