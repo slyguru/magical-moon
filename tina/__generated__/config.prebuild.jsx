@@ -23,9 +23,6 @@ var config_default = defineConfig({
         name: "post",
         label: "Posts (MD)",
         path: "src/content/posts",
-        match: {
-          include: "**/*.md"
-        },
         format: "md",
         ui: {
           filename: {
@@ -48,6 +45,9 @@ var config_default = defineConfig({
           { type: "boolean", name: "draft", label: "Draft" },
           { type: "string", name: "tags", label: "Tags", list: true, required: true },
           { type: "string", name: "description", label: "Description", required: true },
+          { type: "string", name: "canonicalURL", label: "Canonical URL" },
+          { type: "boolean", name: "hideEditPost", label: "Hide Edit Post" },
+          { type: "string", name: "timezone", label: "Timezone" },
           { type: "rich-text", name: "body", label: "Body", isBody: true }
         ]
       },
@@ -56,9 +56,6 @@ var config_default = defineConfig({
         name: "post_mdx",
         label: "Posts (MDX)",
         path: "src/content/posts",
-        match: {
-          include: "**/*.mdx"
-        },
         format: "mdx",
         ui: {
           filename: {
@@ -81,6 +78,9 @@ var config_default = defineConfig({
           { type: "boolean", name: "draft", label: "Draft" },
           { type: "string", name: "tags", label: "Tags", list: true, required: true },
           { type: "string", name: "description", label: "Description", required: true },
+          { type: "string", name: "canonicalURL", label: "Canonical URL" },
+          { type: "boolean", name: "hideEditPost", label: "Hide Edit Post" },
+          { type: "string", name: "timezone", label: "Timezone" },
           { type: "rich-text", name: "body", label: "Body", isBody: true }
         ]
       }

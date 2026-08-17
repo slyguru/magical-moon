@@ -194,6 +194,9 @@ export type Post = Node & Document & {
   draft?: Maybe<Scalars['Boolean']['output']>;
   tags: Array<Scalars['String']['output']>;
   description: Scalars['String']['output'];
+  canonicalURL?: Maybe<Scalars['String']['output']>;
+  hideEditPost?: Maybe<Scalars['Boolean']['output']>;
+  timezone?: Maybe<Scalars['String']['output']>;
   body?: Maybe<Scalars['JSON']['output']>;
   id: Scalars['ID']['output'];
   _sys: SystemInfo;
@@ -236,6 +239,9 @@ export type PostFilter = {
   draft?: InputMaybe<BooleanFilter>;
   tags?: InputMaybe<StringFilter>;
   description?: InputMaybe<StringFilter>;
+  canonicalURL?: InputMaybe<StringFilter>;
+  hideEditPost?: InputMaybe<BooleanFilter>;
+  timezone?: InputMaybe<StringFilter>;
   body?: InputMaybe<RichTextFilter>;
 };
 
@@ -263,6 +269,9 @@ export type Post_Mdx = Node & Document & {
   draft?: Maybe<Scalars['Boolean']['output']>;
   tags: Array<Scalars['String']['output']>;
   description: Scalars['String']['output'];
+  canonicalURL?: Maybe<Scalars['String']['output']>;
+  hideEditPost?: Maybe<Scalars['Boolean']['output']>;
+  timezone?: Maybe<Scalars['String']['output']>;
   body?: Maybe<Scalars['JSON']['output']>;
   id: Scalars['ID']['output'];
   _sys: SystemInfo;
@@ -279,6 +288,9 @@ export type Post_MdxFilter = {
   draft?: InputMaybe<BooleanFilter>;
   tags?: InputMaybe<StringFilter>;
   description?: InputMaybe<StringFilter>;
+  canonicalURL?: InputMaybe<StringFilter>;
+  hideEditPost?: InputMaybe<BooleanFilter>;
+  timezone?: InputMaybe<StringFilter>;
   body?: InputMaybe<RichTextFilter>;
 };
 
@@ -386,6 +398,9 @@ export type PostMutation = {
   draft?: InputMaybe<Scalars['Boolean']['input']>;
   tags?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
   description?: InputMaybe<Scalars['String']['input']>;
+  canonicalURL?: InputMaybe<Scalars['String']['input']>;
+  hideEditPost?: InputMaybe<Scalars['Boolean']['input']>;
+  timezone?: InputMaybe<Scalars['String']['input']>;
   body?: InputMaybe<Scalars['JSON']['input']>;
 };
 
@@ -399,19 +414,22 @@ export type Post_MdxMutation = {
   draft?: InputMaybe<Scalars['Boolean']['input']>;
   tags?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
   description?: InputMaybe<Scalars['String']['input']>;
+  canonicalURL?: InputMaybe<Scalars['String']['input']>;
+  hideEditPost?: InputMaybe<Scalars['Boolean']['input']>;
+  timezone?: InputMaybe<Scalars['String']['input']>;
   body?: InputMaybe<Scalars['JSON']['input']>;
 };
 
-export type PostPartsFragment = { __typename: 'Post', title: string, author: string, pubDatetime: string, modDatetime?: string | null, slug?: string | null, featured?: boolean | null, draft?: boolean | null, tags: Array<string>, description: string, body?: any | null };
+export type PostPartsFragment = { __typename: 'Post', title: string, author: string, pubDatetime: string, modDatetime?: string | null, slug?: string | null, featured?: boolean | null, draft?: boolean | null, tags: Array<string>, description: string, canonicalURL?: string | null, hideEditPost?: boolean | null, timezone?: string | null, body?: any | null };
 
-export type Post_MdxPartsFragment = { __typename: 'Post_mdx', title: string, author: string, pubDatetime: string, modDatetime?: string | null, slug?: string | null, featured?: boolean | null, draft?: boolean | null, tags: Array<string>, description: string, body?: any | null };
+export type Post_MdxPartsFragment = { __typename: 'Post_mdx', title: string, author: string, pubDatetime: string, modDatetime?: string | null, slug?: string | null, featured?: boolean | null, draft?: boolean | null, tags: Array<string>, description: string, canonicalURL?: string | null, hideEditPost?: boolean | null, timezone?: string | null, body?: any | null };
 
 export type PostQueryVariables = Exact<{
   relativePath: Scalars['String']['input'];
 }>;
 
 
-export type PostQuery = { __typename?: 'Query', post: { __typename: 'Post', id: string, title: string, author: string, pubDatetime: string, modDatetime?: string | null, slug?: string | null, featured?: boolean | null, draft?: boolean | null, tags: Array<string>, description: string, body?: any | null, _sys: { __typename?: 'SystemInfo', filename: string, basename: string, hasReferences?: boolean | null, breadcrumbs: Array<string>, path: string, relativePath: string, extension: string } } };
+export type PostQuery = { __typename?: 'Query', post: { __typename: 'Post', id: string, title: string, author: string, pubDatetime: string, modDatetime?: string | null, slug?: string | null, featured?: boolean | null, draft?: boolean | null, tags: Array<string>, description: string, canonicalURL?: string | null, hideEditPost?: boolean | null, timezone?: string | null, body?: any | null, _sys: { __typename?: 'SystemInfo', filename: string, basename: string, hasReferences?: boolean | null, breadcrumbs: Array<string>, path: string, relativePath: string, extension: string } } };
 
 export type PostConnectionQueryVariables = Exact<{
   before?: InputMaybe<Scalars['String']['input']>;
@@ -423,14 +441,14 @@ export type PostConnectionQueryVariables = Exact<{
 }>;
 
 
-export type PostConnectionQuery = { __typename?: 'Query', postConnection: { __typename?: 'PostConnection', totalCount: number, pageInfo: { __typename?: 'PageInfo', hasPreviousPage: boolean, hasNextPage: boolean, startCursor: string, endCursor: string }, edges?: Array<{ __typename?: 'PostConnectionEdges', cursor: string, node?: { __typename: 'Post', id: string, title: string, author: string, pubDatetime: string, modDatetime?: string | null, slug?: string | null, featured?: boolean | null, draft?: boolean | null, tags: Array<string>, description: string, body?: any | null, _sys: { __typename?: 'SystemInfo', filename: string, basename: string, hasReferences?: boolean | null, breadcrumbs: Array<string>, path: string, relativePath: string, extension: string } } | null } | null> | null } };
+export type PostConnectionQuery = { __typename?: 'Query', postConnection: { __typename?: 'PostConnection', totalCount: number, pageInfo: { __typename?: 'PageInfo', hasPreviousPage: boolean, hasNextPage: boolean, startCursor: string, endCursor: string }, edges?: Array<{ __typename?: 'PostConnectionEdges', cursor: string, node?: { __typename: 'Post', id: string, title: string, author: string, pubDatetime: string, modDatetime?: string | null, slug?: string | null, featured?: boolean | null, draft?: boolean | null, tags: Array<string>, description: string, canonicalURL?: string | null, hideEditPost?: boolean | null, timezone?: string | null, body?: any | null, _sys: { __typename?: 'SystemInfo', filename: string, basename: string, hasReferences?: boolean | null, breadcrumbs: Array<string>, path: string, relativePath: string, extension: string } } | null } | null> | null } };
 
 export type Post_MdxQueryVariables = Exact<{
   relativePath: Scalars['String']['input'];
 }>;
 
 
-export type Post_MdxQuery = { __typename?: 'Query', post_mdx: { __typename: 'Post_mdx', id: string, title: string, author: string, pubDatetime: string, modDatetime?: string | null, slug?: string | null, featured?: boolean | null, draft?: boolean | null, tags: Array<string>, description: string, body?: any | null, _sys: { __typename?: 'SystemInfo', filename: string, basename: string, hasReferences?: boolean | null, breadcrumbs: Array<string>, path: string, relativePath: string, extension: string } } };
+export type Post_MdxQuery = { __typename?: 'Query', post_mdx: { __typename: 'Post_mdx', id: string, title: string, author: string, pubDatetime: string, modDatetime?: string | null, slug?: string | null, featured?: boolean | null, draft?: boolean | null, tags: Array<string>, description: string, canonicalURL?: string | null, hideEditPost?: boolean | null, timezone?: string | null, body?: any | null, _sys: { __typename?: 'SystemInfo', filename: string, basename: string, hasReferences?: boolean | null, breadcrumbs: Array<string>, path: string, relativePath: string, extension: string } } };
 
 export type Post_MdxConnectionQueryVariables = Exact<{
   before?: InputMaybe<Scalars['String']['input']>;
@@ -442,7 +460,7 @@ export type Post_MdxConnectionQueryVariables = Exact<{
 }>;
 
 
-export type Post_MdxConnectionQuery = { __typename?: 'Query', post_mdxConnection: { __typename?: 'Post_mdxConnection', totalCount: number, pageInfo: { __typename?: 'PageInfo', hasPreviousPage: boolean, hasNextPage: boolean, startCursor: string, endCursor: string }, edges?: Array<{ __typename?: 'Post_mdxConnectionEdges', cursor: string, node?: { __typename: 'Post_mdx', id: string, title: string, author: string, pubDatetime: string, modDatetime?: string | null, slug?: string | null, featured?: boolean | null, draft?: boolean | null, tags: Array<string>, description: string, body?: any | null, _sys: { __typename?: 'SystemInfo', filename: string, basename: string, hasReferences?: boolean | null, breadcrumbs: Array<string>, path: string, relativePath: string, extension: string } } | null } | null> | null } };
+export type Post_MdxConnectionQuery = { __typename?: 'Query', post_mdxConnection: { __typename?: 'Post_mdxConnection', totalCount: number, pageInfo: { __typename?: 'PageInfo', hasPreviousPage: boolean, hasNextPage: boolean, startCursor: string, endCursor: string }, edges?: Array<{ __typename?: 'Post_mdxConnectionEdges', cursor: string, node?: { __typename: 'Post_mdx', id: string, title: string, author: string, pubDatetime: string, modDatetime?: string | null, slug?: string | null, featured?: boolean | null, draft?: boolean | null, tags: Array<string>, description: string, canonicalURL?: string | null, hideEditPost?: boolean | null, timezone?: string | null, body?: any | null, _sys: { __typename?: 'SystemInfo', filename: string, basename: string, hasReferences?: boolean | null, breadcrumbs: Array<string>, path: string, relativePath: string, extension: string } } | null } | null> | null } };
 
 export const PostPartsFragmentDoc = gql`
     fragment PostParts on Post {
@@ -456,6 +474,9 @@ export const PostPartsFragmentDoc = gql`
   draft
   tags
   description
+  canonicalURL
+  hideEditPost
+  timezone
   body
 }
     `;
@@ -471,6 +492,9 @@ export const Post_MdxPartsFragmentDoc = gql`
   draft
   tags
   description
+  canonicalURL
+  hideEditPost
+  timezone
   body
 }
     `;
@@ -650,7 +674,7 @@ export const ExperimentalGetTinaClient = () =>
   getSdk(
     generateRequester(
       createClient({
-        url: "https://content.tinajs.io/2.4/content/0e3d0092-9e76-4c12-afde-a0ec6390907c/github/main",
+        url: "http://localhost:4001/graphql",
         queries,
       })
     )

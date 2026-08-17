@@ -9,6 +9,9 @@ fragment PostParts on Post {
   draft
   tags
   description
+  canonicalURL
+  hideEditPost
+  timezone
   body
 }
 
@@ -23,5 +26,8 @@ fragment Post_mdxParts on Post_mdx {
   draft
   tags
   description
+  canonicalURL
+  hideEditPost
+  timezone
   body
 }

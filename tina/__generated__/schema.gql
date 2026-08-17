@@ -100,6 +100,9 @@ type Post implements Node & Document {
   draft: Boolean
   tags: [String!]!
   description: String!
+  canonicalURL: String
+  hideEditPost: Boolean
+  timezone: String
   body: JSON
   id: ID!
   _sys: SystemInfo!
@@ -142,6 +145,9 @@ input PostFilter {
   draft: BooleanFilter
   tags: StringFilter
   description: StringFilter
+  canonicalURL: StringFilter
+  hideEditPost: BooleanFilter
+  timezone: StringFilter
   body: RichTextFilter
 }
 
@@ -166,6 +172,9 @@ type Post_mdx implements Node & Document {
   draft: Boolean
   tags: [String!]!
   description: String!
+  canonicalURL: String
+  hideEditPost: Boolean
+  timezone: String
   body: JSON
   id: ID!
   _sys: SystemInfo!
@@ -182,6 +191,9 @@ input Post_mdxFilter {
   draft: BooleanFilter
   tags: StringFilter
   description: StringFilter
+  canonicalURL: StringFilter
+  hideEditPost: BooleanFilter
+  timezone: StringFilter
   body: RichTextFilter
 }
 
@@ -229,6 +241,9 @@ input PostMutation {
   draft: Boolean
   tags: [String]
   description: String
+  canonicalURL: String
+  hideEditPost: Boolean
+  timezone: String
   body: JSON
 }
 
@@ -242,6 +257,9 @@ input Post_mdxMutation {
   draft: Boolean
   tags: [String]
   description: String
+  canonicalURL: String
+  hideEditPost: Boolean
+  timezone: String
   body: JSON
 }
 
