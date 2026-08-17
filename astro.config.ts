@@ -19,6 +19,8 @@ import {
 import { transformerFileName } from "./src/utils/transformers/fileName";
 import config from "./astro-paper.config";
 
+import cloudflare from "@astrojs/cloudflare";
+
 export default defineConfig({
   site: config.site.url,
 
@@ -63,6 +65,7 @@ export default defineConfig({
     plugins: [tailwindcss()],
   },
 
+  // 👇 Re-add this block so the font family exists for your layout components
   fonts: [
     {
       name: "Google Sans Code",
@@ -88,4 +91,8 @@ export default defineConfig({
   experimental: {
     svgOptimizer: svgoOptimizer(),
   },
+
+  adapter: cloudflare({
+    prerenderEnvironment: "node",
+  }),
 });
