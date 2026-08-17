@@ -7,7 +7,7 @@
   },
   "scripts": {
     "dev": "tinacms dev -c \"astro dev\"",
-    "build": "tinacms build && astro check && astro build && pagefind --site dist && cp -r dist/pagefind public/",
+    "build": "NODE_OPTIONS=--max-old-space-size=8100 tinacms build --noTelemetry && astro check && astro build && pagefind --site dist && cp -r dist/pagefind public/",
     "preview": "astro preview",
     "sync": "astro sync",
     "astro": "astro",

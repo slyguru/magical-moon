@@ -23,6 +23,9 @@ var config_default = defineConfig({
         name: "post",
         label: "Posts (MD)",
         path: "src/content/posts",
+        match: {
+          include: "**/*.md"
+        },
         format: "md",
         ui: {
           filename: {
@@ -31,7 +34,8 @@ var config_default = defineConfig({
             }
           },
           router: ({ document }) => {
-            return `/posts/${document._sys.filename}`;
+            const postSlug = document.slug || document._sys.filename;
+            return `/posts/${postSlug}`;
           }
         },
         fields: [
@@ -52,6 +56,9 @@ var config_default = defineConfig({
         name: "post_mdx",
         label: "Posts (MDX)",
         path: "src/content/posts",
+        match: {
+          include: "**/*.mdx"
+        },
         format: "mdx",
         ui: {
           filename: {
@@ -60,7 +67,8 @@ var config_default = defineConfig({
             }
           },
           router: ({ document }) => {
-            return `/posts/${document._sys.filename}`;
+            const postSlug = document.slug || document._sys.filename;
+            return `/posts/${postSlug}`;
           }
         },
         fields: [
