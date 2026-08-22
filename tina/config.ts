@@ -38,10 +38,19 @@ export default defineConfig({
                                     return `${values?.title?.toLowerCase().replace(/[^a-z0-9]/g, '-') || 'new-post'}`
                                   },
                                 },
-                            router: ({ document }) => {
-                              const postSlug = document.slug || document._sys.filename;
-                              return `/posts/${postSlug}`;
-                            },
+                                router: ({ document }) => {
+                                  // 1. Check if a custom slug exists in the document data
+                                  let postSlug = document.slug;
+                                
+                                  // 2. If no custom slug, generate one from the title (just like your slugify config does)
+                                  if (!postSlug) {
+                                    postSlug = document?.title
+                                      ? document.title.toLowerCase().replace(/[^a-z0-9]/g, '-')
+                                      : document._sys.filename;
+                                  }
+                                
+                                  return `/posts/${postSlug}`;
+                                },
                               },
                             fields: [
                               { type: "string", name: "title", label: "Title", isTitle: true, required: true },
@@ -71,10 +80,19 @@ export default defineConfig({
                                     return `${values?.title?.toLowerCase().replace(/[^a-z0-9]/g, '-') || 'new-post'}`
                                   },
                                 },
-                            router: ({ document }) => {
-                              const postSlug = document.slug || document._sys.filename;
-                              return `/posts/${postSlug}`;
-                            },
+                                router: ({ document }) => {
+                                  // 1. Check if a custom slug exists in the document data
+                                  let postSlug = document.slug;
+                                
+                                  // 2. If no custom slug, generate one from the title (just like your slugify config does)
+                                  if (!postSlug) {
+                                    postSlug = document?.title
+                                      ? document.title.toLowerCase().replace(/[^a-z0-9]/g, '-')
+                                      : document._sys.filename;
+                                  }
+                                
+                                  return `/posts/${postSlug}`;
+                                },
                               },
                             fields: [
                               { type: "string", name: "title", label: "Title", isTitle: true, required: true },

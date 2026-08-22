@@ -31,7 +31,10 @@ var config_default = defineConfig({
             }
           },
           router: ({ document }) => {
-            const postSlug = document.slug || document._sys.filename;
+            let postSlug = document.slug;
+            if (!postSlug) {
+              postSlug = document?.title ? document.title.toLowerCase().replace(/[^a-z0-9]/g, "-") : document._sys.filename;
+            }
             return `/posts/${postSlug}`;
           }
         },
@@ -64,7 +67,10 @@ var config_default = defineConfig({
             }
           },
           router: ({ document }) => {
-            const postSlug = document.slug || document._sys.filename;
+            let postSlug = document.slug;
+            if (!postSlug) {
+              postSlug = document?.title ? document.title.toLowerCase().replace(/[^a-z0-9]/g, "-") : document._sys.filename;
+            }
             return `/posts/${postSlug}`;
           }
         },
