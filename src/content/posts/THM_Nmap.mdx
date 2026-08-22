@@ -1,0 +1,265 @@
+---
+title: "TryHackMe Writeup: Nmap"
+author: Guru Brian
+pubDatetime: 2026-08-03T07:31:14.159Z
+slug: 
+featured: false
+tags:
+  - Nmap
+  - TryHackMe
+  - Banner Grabbing
+  - Fingerprinting
+  - CTF
+description: A quick and practical walkthrough on how to uncover hidden credentials through aggressive Nmap service fingerprinting and banner grabbing on non-standard ports.
+hideEditPost: false
+---
+
+Welcome to another TryHackMe writeup! This room serves as a fantastic, bite-sized lesson on why we should never ignore non-standard ports, and why aggressive service scanning is a mandatory step in any enumeration methodology. 
+
+In this post, we will walk through a scenario where a developer left a backdoor service running on a high port. By analyzing raw Nmap service fingerprints and banner responses, we will uncover plaintext credentials leaked directly to our terminal, allowing us to pivot straight into the machine and grab the flag. 
+
+Let's get started!
+
+## Table of contents
+
+## Initial Reconnaissance
+
+First things first, we start with a robust `nmap` scan against all 65,535 ports to ensure we don't miss any services hiding on high, non-standard port numbers.
+
+```bash
+❯ nmap -sC -p- -sV -Pn 10.10.249.121 -T5 -v
+Starting Nmap 7.95 ( https://nmap.org ) at 2025-08-10 05:37 EDT
+NSE: Loaded 157 scripts for scanning.
+NSE: Script Pre-scanning.
+Initiating NSE at 05:37
+Completed NSE at 05:37, 0.00s elapsed
+Initiating NSE at 05:37
+Completed NSE at 05:37, 0.00s elapsed
+Initiating NSE at 05:37
+Completed NSE at 05:37, 0.00s elapsed
+Initiating Parallel DNS resolution of 1 host. at 05:37
+Completed Parallel DNS resolution of 1 host. at 05:37, 0.09s elapsed
+Initiating SYN Stealth Scan at 05:37
+Scanning 10.10.249.121 [65535 ports]
+Discovered open port 22/tcp on 10.10.249.121
+Warning: 10.10.249.121 giving up on port because retransmission cap hit (2).
+Increasing send delay for 10.10.249.121 from 0 to 5 due to 2152 out of 5379 dropped probes since last increase.
+SYN Stealth Scan Timing: About 9.35% done; ETC: 05:43 (0:05:00 remaining)
+SYN Stealth Scan Timing: About 11.74% done; ETC: 05:46 (0:07:39 remaining)
+SYN Stealth Scan Timing: About 17.95% done; ETC: 05:46 (0:06:56 remaining)
+SYN Stealth Scan Timing: About 24.82% done; ETC: 05:46 (0:06:07 remaining)
+Discovered open port 31337/tcp on 10.10.249.121
+Discovered open port 31337/tcp on 10.10.249.121
+SYN Stealth Scan Timing: About 31.14% done; ETC: 05:46 (0:05:34 remaining)
+SYN Stealth Scan Timing: About 43.08% done; ETC: 05:46 (0:05:07 remaining)
+SYN Stealth Scan Timing: About 49.40% done; ETC: 05:47 (0:04:38 remaining)
+SYN Stealth Scan Timing: About 54.80% done; ETC: 05:47 (0:04:08 remaining)
+SYN Stealth Scan Timing: About 60.72% done; ETC: 05:47 (0:03:34 remaining)
+SYN Stealth Scan Timing: About 68.04% done; ETC: 05:47 (0:03:06 remaining)
+SYN Stealth Scan Timing: About 74.92% done; ETC: 05:48 (0:02:35 remaining)
+SYN Stealth Scan Timing: About 80.39% done; ETC: 05:48 (0:02:04 remaining)
+SYN Stealth Scan Timing: About 86.05% done; ETC: 05:48 (0:01:31 remaining)
+SYN Stealth Scan Timing: About 91.70% done; ETC: 05:49 (0:00:55 remaining)
+Discovered open port 2222/tcp on 10.10.249.121
+Completed SYN Stealth Scan at 05:49, 703.04s elapsed (65535 total ports)
+Initiating Service scan at 05:49
+Scanning 3 services on 10.10.249.121
+Completed Service scan at 05:50, 17.55s elapsed (3 services on 1 host)
+NSE: Script scanning 10.10.249.121.
+Initiating NSE at 05:50
+Completed NSE at 05:50, 7.17s elapsed
+Initiating NSE at 05:50
+Completed NSE at 05:50, 0.62s elapsed
+Initiating NSE at 05:50
+Completed NSE at 05:50, 0.00s elapsed
+Nmap scan report for 10.10.249.121
+Host is up (0.22s latency).
+Not shown: 65532 closed tcp ports (reset)
+PORT      STATE SERVICE VERSION
+22/tcp    open  ssh     OpenSSH 8.2p1 Ubuntu 4ubuntu0.4 (Ubuntu Linux; protocol 2.0)
+| ssh-hostkey:
+|   3072 7d:dc:eb:90:e4:af:33:d9:9f:0b:21:9a:fc:d5:77:f2 (RSA)
+|   256 83:a7:4a:61:ef:93:a3:57:1a:57:38:5c:48:2a:eb:16 (ECDSA)
+|_  256 30:bf:ef:94:08:86:07:00:f7:fc:df:e8:ed:fe:07:af (ED25519)
+2222/tcp  open  ssh     OpenSSH 8.2p1 Ubuntu 4ubuntu0.4 (Ubuntu Linux; protocol 2.0)
+| ssh-hostkey:
+|   3072 ea:86:ef:b9:b9:f1:b1:4d:a8:ac:c0:52:bf:c4:5a:c8 (RSA)
+|   256 c6:e3:51:18:09:d1:68:da:d6:6a:51:57:2f:d7:d6:6c (ECDSA)
+|_  256 42:70:c0:82:0a:3a:15:34:96:7f:61:7e:82:8e:d0:34 (ED25519)
+31337/tcp open  Elite?
+| fingerprint-strings:
+|   DNSStatusRequestTCP, DNSVersionBindReqTCP, FourOhFourRequest, GenericLines, GetRequest, HTTPOptions, Help, Kerberos, LANDesk-RC, LDAPBindReq, LDAPSearchReq, LPDString, NULL, RPCCheck, RTSPRequest, SIPOptions, SMBProgNeg, SSLSessionReq, TLSSessionReq, TerminalServer, TerminalServerCookie, X11Probe:
+|     In case I forget - user:pass
+|_    ubuntu:Dafdas!!/str0ng
+1 service unrecognized despite returning data. If you know the service/version, please submit the following fingerprint at https://nmap.org/cgi-bin/submit.cgi?new-service :
+SF-Port31337-TCP:V=7.95%I=7%D=8/10%Time=68986B37%P=x86_64-pc-linux-gnu%r(N
+SF:ULL,35,"In\x20case\x20I\x20forget\x20-\x20user:pass\nubuntu:Dafdas!!/st
+SF:r0ng\n\n")%r(GetRequest,35,"In\x20case\x20I\x20forget\x20-\x20user:pass
+SF:\nubuntu:Dafdas!!/str0ng\n\n")%r(SIPOptions,35,"In\x20case\x20I\x20forg
+SF:et\x20-\x20user:pass\nubuntu:Dafdas!!/str0ng\n\n")%r(GenericLines,35,"I
+SF:n\x20case\x20I\x20forget\x20-\x20user:pass\nubuntu:Dafdas!!/str0ng\n\n"
+SF:)%r(HTTPOptions,35,"In\x20case\x20I\x20forget\x20-\x20user:pass\nubuntu
+SF::Dafdas!!/str0ng\n\n")%r(RTSPRequest,35,"In\x20case\x20I\x20forget\x20-
+SF:\x20user:pass\nubuntu:Dafdas!!/str0ng\n\n")%r(RPCCheck,35,"In\x20case\x
+SF:20I\x20forget\x20-\x20user:pass\nubuntu:Dafdas!!/str0ng\n\n")%r(DNSVers
+SF:ionBindReqTCP,35,"In\x20case\x20I\x20forget\x20-\x20user:pass\nubuntu:D
+SF:afdas!!/str0ng\n\n")%r(DNSStatusRequestTCP,35,"In\x20case\x20I\x20forge
+SF:t\x20-\x20user:pass\nubuntu:Dafdas!!/str0ng\n\n")%r(Help,35,"In\x20case
+SF:\x20I\x20forget\x20-\x20user:pass\nubuntu:Dafdas!!/str0ng\n\n")%r(SSLSe
+SF:ssionReq,35,"In\x20case\x20I\x20forget\x20-\x20user:pass\nubuntu:Dafdas
+SF:!!/str0ng\n\n")%r(TerminalServerCookie,35,"In\x20case\x20I\x20forget\x2
+SF:0-\x20user:pass\nubuntu:Dafdas!!/str0ng\n\n")%r(TLSSessionReq,35,"In\x2
+SF:0case\x20I\x20forget\x20-\x20user:pass\nubuntu:Dafdas!!/str0ng\n\n")%r(
+SF:Kerberos,35,"In\x20case\x20I\x20forget\x20-\x20user:pass\nubuntu:Dafdas
+SF:!!/str0ng\n\n")%r(SMBProgNeg,35,"In\x20case\x20I\x20forget\x20-\x20user
+SF::pass\nubuntu:Dafdas!!/str0ng\n\n")%r(X11Probe,35,"In\x20case\x20I\x20f
+SF:orget\x20-\x20user:pass\nubuntu:Dafdas!!/str0ng\n\n")%r(FourOhFourReque
+SF:st,35,"In\x20case\x20I\x20forget\x20-\x20user:pass\nubuntu:Dafdas!!/str
+SF:0ng\n\n")%r(LPDString,35,"In\x20case\x20I\x20forget\x20-\x20user:pass\n
+SF:ubuntu:Dafdas!!/str0ng\n\n")%r(LDAPSearchReq,35,"In\x20case\x20I\x20for
+SF:get\x20-\x20user:pass\nubuntu:Dafdas!!/str0ng\n\n")%r(LDAPBindReq,35,"I
+SF:n\x20case\x20I\x20forget\x20-\x20user:pass\nubuntu:Dafdas!!/str0ng\n\n"
+SF:)%r(LANDesk-RC,35,"In\x20case\x20I\x20forget\x20-\x20user:pass\nubuntu:
+SF:Dafdas!!/str0ng\n\n")%r(TerminalServer,35,"In\x20case\x20I\x20forget\x2
+SF:0-\x20user:pass\nubuntu:Dafdas!!/str0ng\n\n");
+Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
+
+NSE: Script Post-scanning.
+Initiating NSE at 05:50
+Completed NSE at 05:50, 0.00s elapsed
+Initiating NSE at 05:50
+Completed NSE at 05:50, 0.00s elapsed
+Initiating NSE at 05:50
+Completed NSE at 05:50, 0.00s elapsed
+Read data files from: /usr/share/nmap
+Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+Nmap done: 1 IP address (1 host up) scanned in 728.93 seconds
+```
+The scan reveals three open ports: two SSH services running on ports 22 and 2222, and a highly suspicious service running on port 31337 (often colloquially referred to as "Elite" in hacker culture).
+
+Even from this initial scan, we can see a snippet of text revealing a username and password! Let's dig deeper into that specific port.
+
+## Deep Dive: Banner Grabbing on Port 31337
+
+To get a clearer picture of what is happening, we run a targeted aggressive scan against just port 31337.
+
+```bash
+❯ nmap -sC -p 31337 -sV -Pn 10.10.249.121 -T5 -v
+Starting Nmap 7.95 ( https://nmap.org ) at 2025-08-10 06:00 EDT
+NSE: Loaded 157 scripts for scanning.
+NSE: Script Pre-scanning.
+Initiating NSE at 06:00
+Completed NSE at 06:00, 0.00s elapsed
+Initiating NSE at 06:00
+Completed NSE at 06:00, 0.00s elapsed
+Initiating NSE at 06:00
+Completed NSE at 06:00, 0.00s elapsed
+Initiating Parallel DNS resolution of 1 host. at 06:00
+Completed Parallel DNS resolution of 1 host. at 06:00, 0.02s elapsed
+Initiating SYN Stealth Scan at 06:00
+Scanning 10.10.249.121 [1 port]
+Discovered open port 31337/tcp on 10.10.249.121
+Discovered open port 31337/tcp on 10.10.249.121
+Completed SYN Stealth Scan at 06:00, 0.51s elapsed (1 total ports)
+Initiating Service scan at 06:00
+Scanning 1 service on 10.10.249.121
+Completed Service scan at 06:00, 13.36s elapsed (1 service on 1 host)
+NSE: Script scanning 10.10.249.121.
+Initiating NSE at 06:00
+Completed NSE at 06:00, 0.41s elapsed
+Initiating NSE at 06:00
+Completed NSE at 06:00, 0.41s elapsed
+Initiating NSE at 06:00
+Completed NSE at 06:00, 0.00s elapsed
+Nmap scan report for 10.10.249.121
+Host is up (0.35s latency).
+
+PORT      STATE SERVICE VERSION
+31337/tcp open  Elite?
+| fingerprint-strings:
+|   DNSStatusRequestTCP, DNSVersionBindReqTCP, FourOhFourRequest, GenericLines, GetRequest, HTTPOptions, Help, Kerberos, LANDesk-RC, LDAPBindReq, LDAPSearchReq, LPDString, NULL, RPCCheck, RTSPRequest, SIPOptions, SMBProgNeg, SSLSessionReq, TLSSessionReq, TerminalServer, TerminalServerCookie, X11Probe:
+|     In case I forget - user:pass
+|_    ubuntu:Dafdas!!/str0ng
+1 service unrecognized despite returning data. If you know the service/version, please submit the following fingerprint at https://nmap.org/cgi-bin/submit.cgi?new-service :
+SF-Port31337-TCP:V=7.95%I=7%D=8/10%Time=68986DC0%P=x86_64-pc-linux-gnu%r(N
+SF:ULL,35,"In\x20case\x20I\x20forget\x20-\x20user:pass\nubuntu:Dafdas!!/st
+SF:r0ng\n\n")%r(GetRequest,35,"In\x20case\x20I\x20forget\x20-\x20user:pass
+SF:\nubuntu:Dafdas!!/str0ng\n\n")%r(SIPOptions,35,"In\x20case\x20I\x20forg
+SF:et\x20-\x20user:pass\nubuntu:Dafdas!!/str0ng\n\n")%r(GenericLines,35,"I
+SF:n\x20case\x20I\x20forget\x20-\x20user:pass\nubuntu:Dafdas!!/str0ng\n\n"
+SF:)%r(HTTPOptions,35,"In\x20case\x20I\x20forget\x20-\x20user:pass\nubuntu
+SF::Dafdas!!/str0ng\n\n")%r(RTSPRequest,35,"In\x20case\x20I\x20forget\x20-
+SF:\x20user:pass\nubuntu:Dafdas!!/str0ng\n\n")%r(RPCCheck,35,"In\x20case\x
+SF:20I\x20forget\x20-\x20user:pass\nubuntu:Dafdas!!/str0ng\n\n")%r(DNSVers
+SF:ionBindReqTCP,35,"In\x20case\x20I\x20forget\x20-\x20user:pass\nubuntu:D
+SF:afdas!!/str0ng\n\n")%r(DNSStatusRequestTCP,35,"In\x20case\x20I\x20forge
+SF:t\x20-\x20user:pass\nubuntu:Dafdas!!/str0ng\n\n")%r(Help,35,"In\x20case
+SF:\x20I\x20forget\x20-\x20user:pass\nubuntu:Dafdas!!/str0ng\n\n")%r(SSLSe
+SF:ssionReq,35,"In\x20case\x20I\x20forget\x20-\x20user:pass\nubuntu:Dafdas
+SF:!!/str0ng\n\n")%r(TerminalServerCookie,35,"In\x20case\x20I\x20forget\x2
+SF:0-\x20user:pass\nubuntu:Dafdas!!/str0ng\n\n")%r(TLSSessionReq,35,"In\x2
+SF:0case\x20I\x20forget\x20-\x20user:pass\nubuntu:Dafdas!!/str0ng\n\n")%r(
+SF:Kerberos,35,"In\x20case\x20I\x20forget\x20-\x20user:pass\nubuntu:Dafdas
+SF:!!/str0ng\n\n")%r(SMBProgNeg,35,"In\x20case\x20I\x20forget\x20-\x20user
+SF::pass\nubuntu:Dafdas!!/str0ng\n\n")%r(X11Probe,35,"In\x20case\x20I\x20f
+SF:orget\x20-\x20user:pass\nubuntu:Dafdas!!/str0ng\n\n")%r(FourOhFourReque
+SF:st,35,"In\x20case\x20I\x20forget\x20-\x20user:pass\nubuntu:Dafdas!!/str
+SF:0ng\n\n")%r(LPDString,35,"In\x20case\x20I\x20forget\x20-\x20user:pass\n
+SF:ubuntu:Dafdas!!/str0ng\n\n")%r(LDAPSearchReq,35,"In\x20case\x20I\x20for
+SF:get\x20-\x20user:pass\nubuntu:Dafdas!!/str0ng\n\n")%r(LDAPBindReq,35,"I
+SF:n\x20case\x20I\x20forget\x20-\x20user:pass\nubuntu:Dafdas!!/str0ng\n\n"
+SF:)%r(LANDesk-RC,35,"In\x20case\x20I\x20forget\x20-\x20user:pass\nubuntu:
+SF:Dafdas!!/str0ng\n\n")%r(TerminalServer,35,"In\x20case\x20I\x20forget\x2
+SF:0-\x20user:pass\nubuntu:Dafdas!!/str0ng\n\n");
+
+NSE: Script Post-scanning.
+Initiating NSE at 06:00
+Completed NSE at 06:00, 0.00s elapsed
+Initiating NSE at 06:00
+Completed NSE at 06:00, 0.00s elapsed
+Initiating NSE at 06:00
+Completed NSE at 06:00, 0.00s elapsed
+Read data files from: /usr/share/nmap
+Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+Nmap done: 1 IP address (1 host up) scanned in 15.15 seconds
+           Raw packets sent: 2 (88B) | Rcvd: 2 (88B)
+```
+**Understanding the Fingerprint**  
+There is a banner response from a service running on TCP port 31337. The service responds to multiple probe types (HTTP, DNS, LDAP, etc.) with the exact same message. Looking closely at the raw service fingerprint (SF), we can decode what Nmap is telling us.
+
+
+> \[!TIP]+ Mentor's tip
+> ***Deciphering Nmap Fingerprinting***:
+>
+> When Nmap encounters an unrecognized service, it spits out a raw fingerprint block. Here is a breakdown of what those fields actually mean:
+
+
+Table here!
+
+
+
+By reading through the %r(...) response blocks, the decoded plaintext message becomes crystal clear:
+
+```bash
+In case I forget - user:pass
+ubuntu:Dafdas!!/str0ng
+```
+
+## Initial Access & The Flag
+
+We now have valid credentials! Since we know SSH is open from our initial enumeration phase, we can simply log in as the ubuntu user with the password Dafdas!!/str0ng.
+
+```bash
+$ ls
+ubuntu  user
+$ cd user
+$ pwd
+/home/user
+$ ls
+flag.txt
+$ cat flag.txt
+flag{251f3094XXXXXXXXXXXXXXX}$
+```
+
+> \[!SUCCESS]
+> Just like that, we have system access and the final flag! This room is a perfect reminder that sometimes the easiest way in isn't an exploit—it's simply asking the server to hand over the keys.

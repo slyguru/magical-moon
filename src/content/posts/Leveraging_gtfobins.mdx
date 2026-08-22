@@ -1,0 +1,209 @@
+---
+title: "GTFOBins: A Hacker's Rosetta Stone"
+author: Brian Wafula
+pubDatetime: 2026-08-22T19:06:26.000Z
+slug: 
+featured: false
+tags:
+  - Linux Security
+  - Privilege Escalation
+  - GTFOBins
+  - LotL
+description: "Discover how attackers bypass local security restrictions and escalate privileges in Linux using trusted, native system binaries via GTFOBins."
+hideEditPost: false
+---
+
+When navigating CTFs, there is always a specific moment of panic when a player lands a low-privileged shell but doesn't know how to pivot to root. They often assume they need to compile a complex zero-day exploit or write custom malware. 
+
+The reality is much simpler: the system already has the tools you need to break it. You just need to know how to use them.
+
+Enter GTFOBins.
+
+## Table of contents
+
+## What Exactly is GTFOBins?
+
+GTFOBins is a curated list of Unix binaries that can be exploited by an attacker to bypass local security restrictions. This technique is known as **"Living off the Land" (LotL)**.
+
+Instead of uploading custom malware that an intrusion detection system might immediately flag, you use the target system's own trusted, pre-installed tools—like text editors, file readers, or archive utilities—against itself. Because these binaries are digitally signed and natively trusted, they are completely invisible to standard antivirus scans.
+
+## The Core Attack Vectors
+
+When you search for a binary on the GTFOBins website, it categorizes the exploit strings by function. The most critical categories for privilege escalation include:
+
+*   **Shell:** Commands to break out of restricted, jail-like environments.
+*   **SUID:** Strings to exploit misconfigured "Set owner User ID" bits, allowing you to run a file with the permissions of its owner (usually root).
+*   **Sudo:** Bypasses used when an administrator allows a standard user to run a specific command as root without requiring a password.
+
+> [!INFO] *Decoding the GTFOBins Interface:*
+> When viewing a binary's page on the GTFOBins website, the border styles on the function buttons distinguish between the direct and indirect capabilities of the binary:
+> 
+> *   **Solid Outlines (Native Functions):** Buttons with solid red borders (like *File read* and *Inherit*) represent capabilities natively supported by the binary using its own built-in features and commands.
+> *   **Dotted Outlines (Inherited Functions):** Buttons with dashed or dotted red borders (like *Shell*, *Reverse shell*, *Bind shell*) represent inherited capabilities. If a binary has the "Inherit" function, it can invoke other supported interpreters (such as Python, Lua, or vi), granting it the exploitation functions associated with those underlying tools.
+> 
+> This distinction explains why a capability like *File read* might appear twice: once as a native capability, and again as an inherited capability provided by an embedded interpreter.
+
+## Real-World Exploitation Examples
+If you find a misconfigured binary during an engagement or a CTF, you don't need to invent the syntax to exploit it. GTFOBins gives you the exact cheat codes.
+
+### 1. The `vim` Breakout (Sudo Misconfiguration)
+
+If an administrator allows a user to run the `vim` text editor as root to edit configuration files, they have accidentally given away the keys to the kingdom. GTFOBins provides this instant bypass:
+
+```bash
+sudo vim -c ':!/bin/sh'
+```
+Because vim has a built-in feature that allows you to execute shell commands from within the editor using :!, running it with sudo spawns a privileged root shell instantly.
+### 2. The tar Exploit (SUID Misconfiguration)
+The tar command is just a harmless archiving tool used to zip and unzip files. However, if an admin accidentally leaves the SUID bit set on it, GTFOBins offers this payload:
+```bash
+tar -cf /dev/null /dev/null --checkpoint=1 --checkpoint-action=exec=/bin/sh
+```
+This command forces the archive utility to execute a shell command at its very first "checkpoint." Since the binary is running with SUID root permissions, the shell it spawns is also root.
+
+## The Defender's Takeaway
+Treat every native binary as a potential weapon. True security is not merely about patching vulnerabilities; it requires ruthless configuration management and an uncompromising approach to least privilege.
+
+A single misconfigured SUID bit on a harmless utility will unravel your entire system hardening strategy in seconds, proving that your defenses are only as strong as your weakest configuration.
+
+
+
+
+
+AstroPaper started supporting callouts in AstroPaper v6.1. They use a simple blockquote syntax powered by `rehype-callouts` (Obsidian theme).
+
+Here are the most commonly used types:
+
+> \[!NOTE]
+> Supplementary information the reader should be aware of.
+
+> \[!TIP]
+> Helpful advice, shortcuts, or best practices.
+
+> \[!WARNING]
+> Something that could go wrong or have unintended consequences.
+
+> \[!DANGER]
+> Serious risk of failure, data loss, or incorrect behavior.
+
+> \[!INFO]
+> Neutral informational context — less urgent than a note.
+
+> \[!SUCCESS]
+> Confirmation that something worked or is correct.
+
+The full list of supported types includes: `NOTE`, `ABSTRACT`, `INFO`, `TODO`, `TIP`, `SUCCESS`, `QUESTION`, `WARNING`, `FAILURE`, `DANGER`, `BUG`, `EXAMPLE`, `QUOTE` — each with its own icon and color. Many types also accept aliases (e.g. `HINT` and `IMPORTANT` for `TIP`, `CAUTION` for `WARNING`). See the [rehype-callouts docs](https://github.com/lin-stephanie/rehype-callouts) for the complete reference.
+
+### Collapsible callouts
+
+Add `-` after the type to make the callout collapsed by default, or `+` to make it expanded but collapsible:
+
+> \[!WARNING]- Read before proceeding
+> This content is hidden until the reader expands it. Useful for long caveats that would otherwise interrupt the flow.
+
+> \[!TIP]+ Pro tip (expanded by default)
+> This starts open but can be collapsed. Great for optional detail you still want visible on first load.
+
+### Custom titles
+
+Replace the default type label with any title you like by adding text after the type:
+
+> \[!NOTE] Did you know?
+> The text after the type becomes the callout's heading. Leave it out and the type name is used automatically.
+
+### Syntax summary
+
+```md
+> [!NOTE]
+> Supplementary information.
+
+> [!WARNING]- Collapsed by default
+> Hidden until expanded.
+
+> [!TIP]+ Expanded, but collapsible
+> Starts open.
+
+> [!DANGER] Custom title
+> Replaces the default heading.
+
+```
+
+## Adding table of contents
+
+By default, a post does not include any table of contents (TOC). To include one, write `Table of contents` as an h2 heading (`##` in Markdown) and place it where you want it to appear:
+
+```md
+---
+# frontmatter
+---
+
+Here are some recommendations, tips & tricks for creating new posts in AstroPaper blog theme.
+
+## Table of contents
+
+```
+
+## Headings
+
+There's one thing to note about headings. AstroPaper blog posts use `title` (from frontmatter) as the main heading of the post. Therefore, the rest of the headings in the post should use `h2` \~ `h6`.
+
+This rule is not mandatory, but highly recommended for visual, accessibility, and SEO purposes.
+
+## Storing Images for Blog Content
+
+Here are two methods for storing images and using them inside a markdown file.
+
+> \[!IMPORTANT]
+> If you need to style optimized images in markdown, you should [use MDX](https://docs.astro.build/en/guides/images/#images-in-mdx-files).
+
+### Inside `src/assets/` directory (recommended)
+
+You can store images inside the `src/assets/` directory. These images will be automatically optimized by Astro through the [Image Service API](https://docs.astro.build/en/reference/image-service-reference/).
+
+You can use a relative path or alias path (`@/assets/`) to reference these images.
+
+Example: suppose you want to display `example.jpg` whose path is `src/assets/images/example.jpg`.
+
+```md
+![something](@/assets/images/example.jpg)
+
+![something](../../assets/images/example.jpg)
+
+```
+
+> \[!TIP]
+> Technically, you can store images inside any directory under `src`. `src/assets` is just a recommendation.
+
+### Inside `public/` directory
+
+You can store images inside the `public/` directory. Keep in mind that images stored in `public/` remain untouched by Astro, meaning they will be unoptimized and you need to handle image optimization yourself.
+
+For these images, use an absolute path. They can be displayed using [markdown image syntax](https://www.markdownguide.org/basic-syntax/#images-1) or an HTML `img` tag.
+
+Example: assume `example.jpg` is located at `public/assets/images/example.jpg`.
+
+```md
+![something](/assets/images/example.jpg)
+
+<img src="/assets/images/example.jpg" alt="something" />
+
+```
+
+## Bonus
+
+### Image compression
+
+> \[!WARNING]
+> When putting images in a blog post (especially those in the `public/` directory), compress them first. Unoptimized images significantly hurt page performance.
+
+Recommended image compression sites:
+
+* [TinyPng](https://tinypng.com/)
+* [TinyJPG](https://tinyjpg.com/)
+
+### OG Image
+
+The default OG image will be used if a post does not specify one. Though not required, an OG image relevant to the post should be specified in the frontmatter. The recommended size for OG images is ***1200 X 640*** px.
+
+> \[!TIP]
+> Since AstroPaper v1.4.0, OG images are generated automatically if not specified. Check out [the announcement](https://astro-paper.pages.dev/posts/dynamic-og-image-generation-in-astropaper-blog-posts/).
