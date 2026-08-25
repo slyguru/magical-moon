@@ -29,7 +29,7 @@ When I step away from my Aula budget thock keyboard, you will likely find me out
 
 I also have a strong passion for hands-on automotive diagnostics. I spend my downtime wrenching on my jalopy—whether that involves troubleshooting mechanical quirks or getting under the chassis for hands-on maintenance. When running electronic system diagnostics, I apply the exact same methodology as live incident handling: peeling back the problem layer by layer and systematically ruling out variables until I isolate the root cause.
 
-Execution is worshipped—both on the cloud (in heaven) and on the road (on earth). But neither runs without fuel. If my guides helped you untangle a messy Azure policy or crush a CTF, consider buying me a coffee to keep the late-night labs running. Won't you?
+Execution is worshipped—both on the cloud *(in heaven)* and on the road *(on earth)*. But neither runs without fuel. If my guides helped you untangle a maze of a configuration, crush a CTF or got you inspired, consider buying me coffee to keep the late-night labs running. Won't you?
 
 <a href="https://buymesoda.com/zHk0d74XM8eN6Vr0A6HDSd1DATo1" target="_blank" rel="noopener noreferrer" class="not-prose !no-underline mt-4 inline-flex items-center gap-2 rounded-md border border-accent/40 px-4 py-2 text-sm font-semibold text-accent shadow-sm transition-colors hover:bg-accent hover:text-white">
   🥤 Buy me a soda
