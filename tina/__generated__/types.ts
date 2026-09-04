@@ -7,13 +7,12 @@
     })
     return str
   }
-  export type Maybe<T> = T | null;
-export type InputMaybe<T> = Maybe<T>;
-export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
-export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
-export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
-export type MakeEmpty<T extends { [key: string]: unknown }, K extends keyof T> = { [_ in K]?: never };
+  /** Internal type. DO NOT USE DIRECTLY. */
+type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
+/** Internal type. DO NOT USE DIRECTLY. */
 export type Incremental<T> = T | { [P in keyof T]?: P extends ' $fragmentName' | '__typename' ? T[P] : never };
+export type Maybe<T> = T | null;
+export type InputMaybe<T> = Maybe<T>;
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
   ID: { input: string; output: string; }
@@ -420,47 +419,105 @@ export type Post_MdxMutation = {
   body?: InputMaybe<Scalars['JSON']['input']>;
 };
 
-export type PostPartsFragment = { __typename: 'Post', title: string, author: string, pubDatetime: string, modDatetime?: string | null, slug?: string | null, featured?: boolean | null, draft?: boolean | null, tags: Array<string>, description: string, canonicalURL?: string | null, hideEditPost?: boolean | null, timezone?: string | null, body?: any | null };
+export type StringFilter = {
+  startsWith?: string | null | undefined;
+  eq?: string | null | undefined;
+  exists?: boolean | null | undefined;
+  in?: Array<string | null | undefined> | null | undefined;
+};
 
-export type Post_MdxPartsFragment = { __typename: 'Post_mdx', title: string, author: string, pubDatetime: string, modDatetime?: string | null, slug?: string | null, featured?: boolean | null, draft?: boolean | null, tags: Array<string>, description: string, canonicalURL?: string | null, hideEditPost?: boolean | null, timezone?: string | null, body?: any | null };
+export type DatetimeFilter = {
+  after?: string | null | undefined;
+  before?: string | null | undefined;
+  eq?: string | null | undefined;
+  exists?: boolean | null | undefined;
+  in?: Array<string | null | undefined> | null | undefined;
+};
+
+export type BooleanFilter = {
+  eq?: boolean | null | undefined;
+  exists?: boolean | null | undefined;
+};
+
+export type RichTextFilter = {
+  startsWith?: string | null | undefined;
+  eq?: string | null | undefined;
+  exists?: boolean | null | undefined;
+};
+
+export type PostFilter = {
+  title?: StringFilter | null | undefined;
+  author?: StringFilter | null | undefined;
+  pubDatetime?: DatetimeFilter | null | undefined;
+  modDatetime?: DatetimeFilter | null | undefined;
+  slug?: StringFilter | null | undefined;
+  featured?: BooleanFilter | null | undefined;
+  draft?: BooleanFilter | null | undefined;
+  tags?: StringFilter | null | undefined;
+  description?: StringFilter | null | undefined;
+  canonicalURL?: StringFilter | null | undefined;
+  hideEditPost?: BooleanFilter | null | undefined;
+  timezone?: StringFilter | null | undefined;
+  body?: RichTextFilter | null | undefined;
+};
+
+export type Post_MdxFilter = {
+  title?: StringFilter | null | undefined;
+  author?: StringFilter | null | undefined;
+  pubDatetime?: DatetimeFilter | null | undefined;
+  modDatetime?: DatetimeFilter | null | undefined;
+  slug?: StringFilter | null | undefined;
+  featured?: BooleanFilter | null | undefined;
+  draft?: BooleanFilter | null | undefined;
+  tags?: StringFilter | null | undefined;
+  description?: StringFilter | null | undefined;
+  canonicalURL?: StringFilter | null | undefined;
+  hideEditPost?: BooleanFilter | null | undefined;
+  timezone?: StringFilter | null | undefined;
+  body?: RichTextFilter | null | undefined;
+};
+
+export type PostPartsFragment = { __typename: 'Post', title: string, author: string, pubDatetime: string, modDatetime: string | null, slug: string | null, featured: boolean | null, draft: boolean | null, tags: Array<string>, description: string, canonicalURL: string | null, hideEditPost: boolean | null, timezone: string | null, body: any };
+
+export type Post_MdxPartsFragment = { __typename: 'Post_mdx', title: string, author: string, pubDatetime: string, modDatetime: string | null, slug: string | null, featured: boolean | null, draft: boolean | null, tags: Array<string>, description: string, canonicalURL: string | null, hideEditPost: boolean | null, timezone: string | null, body: any };
 
 export type PostQueryVariables = Exact<{
-  relativePath: Scalars['String']['input'];
+  relativePath: string;
 }>;
 
 
-export type PostQuery = { __typename?: 'Query', post: { __typename: 'Post', id: string, title: string, author: string, pubDatetime: string, modDatetime?: string | null, slug?: string | null, featured?: boolean | null, draft?: boolean | null, tags: Array<string>, description: string, canonicalURL?: string | null, hideEditPost?: boolean | null, timezone?: string | null, body?: any | null, _sys: { __typename?: 'SystemInfo', filename: string, basename: string, hasReferences?: boolean | null, breadcrumbs: Array<string>, path: string, relativePath: string, extension: string } } };
+export type PostQuery = { post: { __typename: 'Post', id: string, title: string, author: string, pubDatetime: string, modDatetime: string | null, slug: string | null, featured: boolean | null, draft: boolean | null, tags: Array<string>, description: string, canonicalURL: string | null, hideEditPost: boolean | null, timezone: string | null, body: any, _sys: { filename: string, basename: string, hasReferences: boolean | null, breadcrumbs: Array<string>, path: string, relativePath: string, extension: string } } };
 
 export type PostConnectionQueryVariables = Exact<{
-  before?: InputMaybe<Scalars['String']['input']>;
-  after?: InputMaybe<Scalars['String']['input']>;
-  first?: InputMaybe<Scalars['Float']['input']>;
-  last?: InputMaybe<Scalars['Float']['input']>;
-  sort?: InputMaybe<Scalars['String']['input']>;
-  filter?: InputMaybe<PostFilter>;
+  before?: string | null | undefined;
+  after?: string | null | undefined;
+  first?: number | null | undefined;
+  last?: number | null | undefined;
+  sort?: string | null | undefined;
+  filter?: PostFilter | null | undefined;
 }>;
 
 
-export type PostConnectionQuery = { __typename?: 'Query', postConnection: { __typename?: 'PostConnection', totalCount: number, pageInfo: { __typename?: 'PageInfo', hasPreviousPage: boolean, hasNextPage: boolean, startCursor: string, endCursor: string }, edges?: Array<{ __typename?: 'PostConnectionEdges', cursor: string, node?: { __typename: 'Post', id: string, title: string, author: string, pubDatetime: string, modDatetime?: string | null, slug?: string | null, featured?: boolean | null, draft?: boolean | null, tags: Array<string>, description: string, canonicalURL?: string | null, hideEditPost?: boolean | null, timezone?: string | null, body?: any | null, _sys: { __typename?: 'SystemInfo', filename: string, basename: string, hasReferences?: boolean | null, breadcrumbs: Array<string>, path: string, relativePath: string, extension: string } } | null } | null> | null } };
+export type PostConnectionQuery = { postConnection: { totalCount: number, pageInfo: { hasPreviousPage: boolean, hasNextPage: boolean, startCursor: string, endCursor: string }, edges: Array<{ cursor: string, node: { __typename: 'Post', id: string, title: string, author: string, pubDatetime: string, modDatetime: string | null, slug: string | null, featured: boolean | null, draft: boolean | null, tags: Array<string>, description: string, canonicalURL: string | null, hideEditPost: boolean | null, timezone: string | null, body: any, _sys: { filename: string, basename: string, hasReferences: boolean | null, breadcrumbs: Array<string>, path: string, relativePath: string, extension: string } } | null } | null> | null } };
 
 export type Post_MdxQueryVariables = Exact<{
-  relativePath: Scalars['String']['input'];
+  relativePath: string;
 }>;
 
 
-export type Post_MdxQuery = { __typename?: 'Query', post_mdx: { __typename: 'Post_mdx', id: string, title: string, author: string, pubDatetime: string, modDatetime?: string | null, slug?: string | null, featured?: boolean | null, draft?: boolean | null, tags: Array<string>, description: string, canonicalURL?: string | null, hideEditPost?: boolean | null, timezone?: string | null, body?: any | null, _sys: { __typename?: 'SystemInfo', filename: string, basename: string, hasReferences?: boolean | null, breadcrumbs: Array<string>, path: string, relativePath: string, extension: string } } };
+export type Post_MdxQuery = { post_mdx: { __typename: 'Post_mdx', id: string, title: string, author: string, pubDatetime: string, modDatetime: string | null, slug: string | null, featured: boolean | null, draft: boolean | null, tags: Array<string>, description: string, canonicalURL: string | null, hideEditPost: boolean | null, timezone: string | null, body: any, _sys: { filename: string, basename: string, hasReferences: boolean | null, breadcrumbs: Array<string>, path: string, relativePath: string, extension: string } } };
 
 export type Post_MdxConnectionQueryVariables = Exact<{
-  before?: InputMaybe<Scalars['String']['input']>;
-  after?: InputMaybe<Scalars['String']['input']>;
-  first?: InputMaybe<Scalars['Float']['input']>;
-  last?: InputMaybe<Scalars['Float']['input']>;
-  sort?: InputMaybe<Scalars['String']['input']>;
-  filter?: InputMaybe<Post_MdxFilter>;
+  before?: string | null | undefined;
+  after?: string | null | undefined;
+  first?: number | null | undefined;
+  last?: number | null | undefined;
+  sort?: string | null | undefined;
+  filter?: Post_MdxFilter | null | undefined;
 }>;
 
 
-export type Post_MdxConnectionQuery = { __typename?: 'Query', post_mdxConnection: { __typename?: 'Post_mdxConnection', totalCount: number, pageInfo: { __typename?: 'PageInfo', hasPreviousPage: boolean, hasNextPage: boolean, startCursor: string, endCursor: string }, edges?: Array<{ __typename?: 'Post_mdxConnectionEdges', cursor: string, node?: { __typename: 'Post_mdx', id: string, title: string, author: string, pubDatetime: string, modDatetime?: string | null, slug?: string | null, featured?: boolean | null, draft?: boolean | null, tags: Array<string>, description: string, canonicalURL?: string | null, hideEditPost?: boolean | null, timezone?: string | null, body?: any | null, _sys: { __typename?: 'SystemInfo', filename: string, basename: string, hasReferences?: boolean | null, breadcrumbs: Array<string>, path: string, relativePath: string, extension: string } } | null } | null> | null } };
+export type Post_MdxConnectionQuery = { post_mdxConnection: { totalCount: number, pageInfo: { hasPreviousPage: boolean, hasNextPage: boolean, startCursor: string, endCursor: string }, edges: Array<{ cursor: string, node: { __typename: 'Post_mdx', id: string, title: string, author: string, pubDatetime: string, modDatetime: string | null, slug: string | null, featured: boolean | null, draft: boolean | null, tags: Array<string>, description: string, canonicalURL: string | null, hideEditPost: boolean | null, timezone: string | null, body: any, _sys: { filename: string, basename: string, hasReferences: boolean | null, breadcrumbs: Array<string>, path: string, relativePath: string, extension: string } } | null } | null> | null } };
 
 export const PostPartsFragmentDoc = gql`
     fragment PostParts on Post {
@@ -674,7 +731,7 @@ export const ExperimentalGetTinaClient = () =>
   getSdk(
     generateRequester(
       createClient({
-        url: "https://content.tinajs.io/2.4/content/0e3d0092-9e76-4c12-afde-a0ec6390907c/github/main",
+        url: "http://localhost:4001/graphql",
         queries,
       })
     )
@@ -686,5 +743,7 @@ export const queries = (
   const requester = generateRequester(client)
   return getSdk(requester)
 }
+
+export type { Exact };
 
   
