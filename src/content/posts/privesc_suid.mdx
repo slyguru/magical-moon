@@ -14,6 +14,9 @@ description: "Learn how attackers elevate their privileges in Linux by hunting f
 hideEditPost: false
 ---
 
+![Hack Attack](https://images.pexels.com/photos/14066351/pexels-photo-14066351.jpeg?auto=compress\&cs=tinysrgb\&w=1260\&h=750\&dpr=1)
+*Photo by [Lucas Andrade](https://images.pexels.com/photos/14066351/)*
+
 Imagine you’ve just gained a low-level shell on a Linux target. You are currently a standard user, but you need `root` access to fully compromise the system and evaluate its true risk. One of the most effective ways to elevate your privileges is by hunting for SUID misconfigurations.
 
 > [!INFO] What is SUID?
@@ -31,7 +34,7 @@ To hunt for exploitable files, we need to search the entire root directory for f
 find / -perm -4000 2>/dev/null
 ```
 
-> [!TIP] ***Understanding File Descriptors:***
+> [!TIP] **Understanding File Descriptors:**
 > Linux utilizes three standard streams (assigned specific file descriptor numbers) to handle data:
 >
 > - 0 - Standard Input (stdin): Accepts data from a source like a keyboard.
@@ -40,15 +43,15 @@ find / -perm -4000 2>/dev/null
 >
 > - 2 - Standard Error (stderr): Isolates and outputs diagnostic error messages.
 > 
-> The 2>/dev/null at the end of our command is crucial. As a low-privileged user, scanning the entire / directory will generate hundreds of "Permission denied" errors. By explicitly targeting stream 2, we send only the standard error messages to /dev/null (the digital void), leaving us with a clean output of the files we actually found.
+> The `2>/dev/null` at the end of our command is crucial. As a low-privileged user, scanning the entire `/` directory will generate hundreds of *"Permission denied"* errors. By explicitly targeting stream 2, we send only the standard error messages to `/dev/null` (the digital void), leaving us with a clean output of the files we actually found.
 
-Looking at the results of our scan, one binary stands out immediately: /usr/bin/find.
+Looking at the results of our scan, one binary stands out immediately: `/usr/bin/find`.
 
 The find command shouldn't normally have SUID permissions. Because it does, and because it has a built-in -exec parameter that lets it run other commands, it can be easily weaponized.
 
 
 ### Weaponizing the Binary
-By passing the /bin/sh shell to the -exec flag, the find command spawns a new shell. Because find is running as root due to that SUID bit, the new shell it spawns also runs as root!
+By passing the `/bin/sh` shell to the `-exec` flag, the find command spawns a new shell. Because find is running as root due to that SUID bit, the new shell it spawns also runs as root!
 
 Here is the exact command to capture the root shell:
 
