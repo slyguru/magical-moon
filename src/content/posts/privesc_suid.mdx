@@ -58,17 +58,17 @@ find . -exec /bin/sh -p \; -quit
 
 Here is exactly how that command breaks down:
 
-- . (Period): Specifies the starting location for the search, essentially telling find to look right where you are standing.
+- `.` (Period): Specifies the starting location for the search, essentially telling find to look right where you are standing.
 
-- -exec : The pivot point of the exploit. This built-in feature allows find to execute an arbitrary command on the files it locates.
+- `-exec` : The pivot point of the exploit. This built-in feature allows find to execute an arbitrary command on the files it locates.
 
-- /bin/sh -p : The command being executed. /bin/sh calls the Bourne shell. The -p (privileged mode) flag is critical—it forces the shell to retain the effective root permissions granted by the SUID misconfiguration rather than dropping them.
+- `/bin/sh -p` : The command being executed. /bin/sh calls the Bourne shell. The -p (privileged mode) flag is critical—it forces the shell to retain the effective root permissions granted by the SUID misconfiguration rather than dropping them.
 
-- \; (Semicolon): Terminates the exec parameter. The backslash escapes the semicolon so your current shell passes it directly to find instead of trying to run it locally.
+- `\; (Semicolon)`: Terminates the exec parameter. The backslash escapes the semicolon so your current shell passes it directly to find instead of trying to run it locally.
 
-- -quit : Tells find to exit immediately after processing the very first file it encounters, rather than spawning a new shell for every single file in the directory.
+- `-quit` : Tells find to exit immediately after processing the very first file it encounters, rather than spawning a new shell for every single file in the directory.
 
-Test it by typing whoami and hitting enter.
+Test it by typing `whoami` and hitting enter.
 
 Root. We own the system.
 
@@ -77,7 +77,7 @@ Root. We own the system.
 
 As defenders, this is exactly why the principle of least privilege matters. A single misconfigured binary unravels your entire system hardening strategy.
 
-> [!DANGER] ***The Mindset Shift:***
+> [!DANGER] **The Mindset Shift:**
 > Remember our mindset: No zero days required. Continuous, progressive growth makes us better defenders today than we were yesterday. We must audit our own permissions before attackers do it for us.
 
 If you are wondering how I knew the exact syntax to weaponize that find command, the secret is that you don't need to memorize it. Check out my full guide on ***GTFOBins: A Hacker's Rosetta Stone*** to see exactly how to uncover these strings on the fly!

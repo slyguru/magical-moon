@@ -12,12 +12,15 @@ tags:
 description: "Discover how attackers bypass local security restrictions and escalate privileges in Linux using trusted, native system binaries via GTFOBins."
 hideEditPost: false
 ---
+import { Image } from 'astro:assets';
+import gtfobinsImg from '../../assets/gtfobins.png';
+
 
 When navigating CTFs, there is always a specific moment of panic when a player lands a low-privileged shell but doesn't know how to pivot to root. They often assume they need to compile a complex zero-day exploit or write custom malware. 
 
 The reality is much simpler: the system already has the tools you need to break it. You just need to know how to use them.
 
-Enter GTFOBins.
+Enter [GTFOBins](https://gtfobins.org/).
 
 ## Table of contents
 
@@ -35,13 +38,15 @@ When you search for a binary on the GTFOBins website, it categorizes the exploit
 *   **SUID:** Strings to exploit misconfigured "Set owner User ID" bits, allowing you to run a file with the permissions of its owner (usually root).
 *   **Sudo:** Bypasses used when an administrator allows a standard user to run a specific command as root without requiring a password.
 
-> [!INFO] *Decoding the GTFOBins Interface:*
+> [!INFO] Decoding the GTFOBins Interface:
 > When viewing a binary's page on the GTFOBins website, the border styles on the function buttons distinguish between the direct and indirect capabilities of the binary:
 > 
+> <Image src={gtfobinsImg} alt="GTFOBins Interface" />
+>
 > *   **Solid Outlines (Native Functions):** Buttons with solid red borders (like *File read* and *Inherit*) represent capabilities natively supported by the binary using its own built-in features and commands.
 > *   **Dotted Outlines (Inherited Functions):** Buttons with dashed or dotted red borders (like *Shell*, *Reverse shell*, *Bind shell*) represent inherited capabilities. If a binary has the "Inherit" function, it can invoke other supported interpreters (such as Python, Lua, or vi), granting it the exploitation functions associated with those underlying tools.
-> 
-> This distinction explains why a capability like *File read* might appear twice: once as a native capability, and again as an inherited capability provided by an embedded interpreter.
+
+> This distinction explains why a capability like *File read* might appear twice: once as a native capability, and again as an inherited capability provided by an embedded interpreter like in the above case for the *vim* binary.
 
 ## Real-World Exploitation Examples
 If you find a misconfigured binary during an engagement or a CTF, you don't need to invent the syntax to exploit it. GTFOBins gives you the exact cheat codes.

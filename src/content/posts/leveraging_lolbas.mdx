@@ -25,7 +25,7 @@ To survive in a modern Windows environment, attackers use the exact same strateg
 
 ## LOLBAS: The Windows "GTFOBins"
 
-**LOLBAS** stands for *Living Off The Land Binaries, Scripts, and Libraries*. Just like its Linux counterpart, the LOLBAS project catalogs every native, Microsoft-signed executable that can be used by an attacker to execute code, download payloads, bypass User Account Control (UAC), or evade application whitelisting.
+**[LOLBAS](https://lolbas-project.github.io/)** stands for *Living Off The Land Binaries, Scripts, and Libraries*. Just like its Linux counterpart, the LOLBAS project catalogs every native, Microsoft-signed executable that can be used by an attacker to execute code, download payloads, bypass User Account Control (UAC), or evade application whitelisting.
 
 Because these binaries are cryptographically signed by Microsoft and native to the operating system, they are implicitly trusted by antivirus solutions.
 
@@ -46,13 +46,13 @@ By running this, the trusted Microsoft binary reaches out and downloads your mal
 
 Imagine a system where the administrator has deployed AppLocker to block all unapproved .exe files. If you try to run your malware, it gets blocked.
 
-Enter MSBuild.exe. This is a native part of the .NET framework used by developers to build applications. Attackers can write their malicious payload inside a simple XML project file (.csproj).
+Enter `MSBuild.exe`. This is a native part of the .NET framework used by developers to build applications. Attackers can write their malicious payload inside a simple XML project file (.csproj).
 
 ```powershell
 MSBuild.exe C:\Temp\malicious_project.csproj
 ```
 
-Because MSBuild.exe is a highly trusted, Microsoft-signed binary, AppLocker happily allows it to run. MSBuild reads the malicious XML file and executes the attacker's code directly into memory, completely bypassing the executable blocklist.
+Because `MSBuild.exe` is a highly trusted, Microsoft-signed binary, AppLocker happily allows it to run. MSBuild reads the malicious XML file and executes the attacker's code directly into memory, completely bypassing the executable blocklist.
 
 ## The Kernel Threat: LOLDrivers and BYOVD
 
